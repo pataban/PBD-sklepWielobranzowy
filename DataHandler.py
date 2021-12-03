@@ -2,7 +2,10 @@ import pymongo
 from pymongo import MongoClient
 import random
 from random import randint
+import datetime
 
+def getTime():
+    return datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 class DataHandler:
     def __init__(self):
         self.client=MongoClient("mongodb://localhost:27017")    
@@ -49,11 +52,30 @@ class DataHandler:
             }
             self.pracownicy.insert_one(prac)
         for i in range(1,10):
-            kli={
-                'NIP': randint(0,1000000),
-                'nazwa': "nazwa"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
-                'rachunki':[{}] 
-            }
+            kli=None
+            if(randint(0,1)==0):
+                kli={
+                    'NIP': randint(0,1000000),
+                    'nazwa': "nazwa"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
+                    'rachunki':[{
+                        'nrR':randint(0,1000000),
+                        'data':getTime(),
+                        'nrP':randint(0,1000000),
+                        'towary':[]
+                    }] 
+                }
+            else:
+                kli={
+                    'imie': "imie"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
+                    'nazwisko': "nazwisko"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
+                    'nrK': randint(0,1000000),
+                    'rachunki':[{
+                        'nrR':randint(0,1000000),
+                        'data':getTime(),
+                        'nrP':randint(0,1000000),
+                        'towary':[]
+                    }] 
+                }
             self.klienci.insert_one(kli)
 
     def printAll(self):
