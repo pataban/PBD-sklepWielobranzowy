@@ -16,6 +16,13 @@ class DataHandler:
             self.pracownicy.insert_one({'login':"aaa",'haslo':"aaa"})           #uzytkownik testowy
         
 
+    def getData(self,collection,atribute=None,value=None):
+        if(atribute==None and value==None):
+            return self.db[collection].find({})
+        if(value==None):
+            return self.db[collection].find({atribute})
+        return self.db[collection].find({atribute:value})
+
     def login(self,login,password):
         user=self.pracownicy.find_one({'login':login})
         if (user==None):

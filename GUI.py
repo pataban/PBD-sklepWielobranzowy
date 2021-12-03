@@ -1,5 +1,6 @@
 from DataHandler import DataHandler
 import tkinter as tk
+from tkinter import ttk
 from DataFrame import DataFrame
 
 class Gui(tk.Frame):
@@ -77,6 +78,20 @@ class Gui(tk.Frame):
         self.towaryFrame.pack(side="top")
         self.towaryFrame.backButton["command"]=self.showMenuFrame
         
+        self.dataSheet=ttk.Treeview(self.towaryFrame,column=("nazwa","kod","cena"),show="headings")
+        #self.dataSheet.column("nazwa")
+        self.dataSheet.heading("nazwa", text="Nazwa")
+        self.dataSheet.heading("kod", text="Kod")
+        self.dataSheet.heading("cena", text="Cena")
+        self.dataSheet.grid(row=2)
+        self.dataSheet.insert("","end",values=("testname",123,12.56))                   #test data
+
+        towary=self.data.getData("towary")
+        for t in towary:
+            self.dataSheet.insert("","end",text="1",values=(t["nazwa"],t["kod"],t["cena"]))
+        
+        self.towaryFrame.editButton["command"]=lambda:print(self.dataSheet.item(self.dataSheet.selection()[0])["values"])
+
 
 
     def showKlienciFrame(self):

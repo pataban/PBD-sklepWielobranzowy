@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 class DataFrame(tk.Frame):
     def __init__(self,master):
@@ -36,6 +37,4 @@ class DataFrame(tk.Frame):
         self.searchButton=tk.Button(menuRow2,text="Search")
         self.searchButton.grid(row=0,column=4)
 
-        self.dataListbox=tk.Listbox(self, width=50,selectmode="single")
-        self.dataListbox.insert(1,"test ")                        #test
-        self.dataListbox.grid(row=2)
+        
