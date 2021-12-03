@@ -14,6 +14,7 @@ class Gui(tk.Frame):
         self.towaryFrame=None
         self.klienciFrame=None
         self.rachunkiFrame=None
+        self.pracownicyFrame=None
         self.userLogin=""
         self.userPasss=""
         self.showLoginFrame()
@@ -67,6 +68,9 @@ class Gui(tk.Frame):
 
         rachunkiButton=tk.Button(self.menuFrame,text="Rachunki",command=self.showRachunkiFrame)
         rachunkiButton.grid(row=1,column=2)
+
+        pracownicyButton=tk.Button(self.menuFrame,text="Pracownicy",command=self.showPracownicyFrame)
+        pracownicyButton.grid(row=1,column=3)
 
 
     def showTowaryFrame(self):
@@ -151,6 +155,33 @@ class Gui(tk.Frame):
         
         self.rachunkiFrame.editButton["command"]=lambda:print(self.rachunkiSheet.item(self.rachunkiSheet.selection()[0])["values"])"""
 
+    def showPracownicyFrame(self):
+        self.hideAllFrames()
+        if(self.pracownicyFrame!=None):
+            self.pracownicyFrame.pack(side="top")
+            return
+        self.pracownicyFrame=DataFrame(self)
+        self.pracownicyFrame.pack(side="top")
+        self.pracownicyFrame.backButton["command"]=self.showMenuFrame
+
+        self.pracownicySheet=ttk.Treeview(self.pracownicyFrame,column=("imie","nazwisko","nrP","login","haslo"),show="headings")
+        #self.pracownicySheet.column("nazwa")
+        self.pracownicySheet.heading("imie", text="Imie")
+        self.pracownicySheet.heading("nazwisko", text="Nazwisko")
+        self.pracownicySheet.heading("nrP", text="NrP")
+        self.pracownicySheet.heading("login", text="Login")
+        self.pracownicySheet.heading("haslo", text="Haslo")
+        self.pracownicySheet.grid(row=2)
+        self.pracownicySheet.insert("","end",values=("testname","testsurname",147,"testLogin","testPass"))                   #test data
+        
+        pracownicy=self.data.getData("pracownicy")
+        for p in pracownicy:
+            print(p)
+            values=(p["imie"],p["nazwisko"],p["nrP"],p["login"],p["haslo"])
+            self.pracownicySheet.insert("","end",values=values)
+        
+        self.pracownicyFrame.editButton["command"]=lambda:print(self.pracownicySheet.item(self.pracownicySheet.selection()[0])["values"])
+
 
 
     def loginUser(self):
@@ -191,6 +222,9 @@ class Gui(tk.Frame):
         if(self.rachunkiFrame!=None):
             self.rachunkiFrame.pack_forget()
             self.pack()
+        if(self.pracownicyFrame!=None):
+            self.pracownicyFrame.pack_forget()
+            self.pack()
         return
 
     def clearSessionData(self):
@@ -200,6 +234,7 @@ class Gui(tk.Frame):
         self.towaryFrame=None
         self.klienciFrame=None
         self.rachunkiFrame=None
+        self.pracownicyFrame=None
         self.userLogin=""
         self.userPasss=""
 

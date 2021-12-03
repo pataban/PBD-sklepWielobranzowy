@@ -16,7 +16,7 @@ class DataHandler:
         self.klienci=self.db["klienci"]
 
         if(self.pracownicy.find_one({'login':"aaa"})==None):
-            self.pracownicy.insert_one({'login':"aaa",'haslo':"aaa"})           #uzytkownik testowy
+            self.pracownicy.insert_one({'login':"aaa",'haslo':"aaa",'imie':"aaa",'nazwisko':"aaa",'nrP':111})           #uzytkownik testowy
         
 
     def getData(self,collection,atribute=None,value=None):
