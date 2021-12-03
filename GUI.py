@@ -1,10 +1,11 @@
-import data
+from DataHandler import DataHandler
 import tkinter as tk
 from DataFrame import DataFrame
 
 class Gui(tk.Frame):
     def __init__(self, master=tk.Tk()):
         super().__init__(master)
+        self.data=DataHandler()
         master.title("sklep wielobranzowy")
         self.pack()
         self.loginFrame=None
@@ -105,7 +106,7 @@ class Gui(tk.Frame):
             self.update()
             return
 
-        if(data.login(self.loginInput.get(),self.passInput.get())):
+        if(self.data.login(self.loginInput.get(),self.passInput.get())):
             self.userLogin=self.loginInput.get()
             self.loginInput.delete(0,1000)
             self.userPass=self.passInput.get()
