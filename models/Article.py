@@ -10,6 +10,8 @@ class Article:
             raise TypeError('Invalid argument: name')
         if actualPrice is None or not isinstance(actualPrice, Decimal):
             raise TypeError('Invalid argument: actualPrice')
+        if object_id is not None and not isinstance(object_id, str):
+            raise TypeError('Invalid argument: object_id')
 
         self.code = code
         self.name = name
