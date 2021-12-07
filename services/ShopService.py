@@ -6,27 +6,77 @@ class ShopService:  # future facade for all operations on shop database
         self._workerRepository = workerRepository
         self._clientRepository = clientRepository
 
+
+    def findWorkerById():
+        pass
+
+    def findClientById():
+        pass
+
+    def findArticleById():
+        pass
+
+    def insertWorker():
+        pass
+
+    def insertClient():
+        pass
+
+    def insertArticle():
+        pass
+
+    def updateWorkerById():
+        pass
+
+    def updateClientById():
+        pass
+
+    def updateArticleById():
+        pass
+
+    def removeWorkerById():
+        pass
+
+    def removeClientById():
+        pass
+
+    def removeArticleById():
+        pass
+
+
+    def generateNewKodTowaru():
+        pass
+
+    def generateNewNrK():
+        pass
+
+    def generateNewNrP():
+        pass
+
+    def generateNewNrR():
+        pass
+
+    def login(self,login,password):
+        return self._workerRepository.login(login,password)
+
     def chkTestUser(self):          #uzytkownik testowy
         if(self._workerRepository.login("aaa","aaa")==None):
             worker=Worker(111,"aaa","aaa","aaa","aaa",True,True,True)
             self._workerRepository.insert(worker)
-        
-    def login(self,login,password):
-        return self._workerRepository.login(login,password)
 
     def printAll(self):
         print("towary:")
         tow=self._articleRepository.find()
         for t in tow:
-            print(t)
+            print(str(t))
         print("pracownicy:")
         pra=self._workerRepository.find()
         for p in pra:
-            print(p)
+            print(str(p))
         print("klienci:")
         """kli=self._clientRepository.find()
         for k in kli:
-            print(k)"""
+            print(str(k))"""
 
     def delAll(self):
         self._articleRepository._articles_handler.delete_many({})
