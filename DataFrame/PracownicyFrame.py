@@ -27,7 +27,7 @@ class PracownicyFrame(DataFrame):
         
     def getRecomendedKeys(self):
         keys={"nrP":0,"imie":"","nazwisko":"","login":"","haslo":""
-            ,"isSprzedawca":False,"isMenager":False,"isWlasciciel":False}       #ustawic dobry nrP
+            ,"isSprzedawca":"false","isMenager":"false","isWlasciciel":"false"}       #ustawic dobry nrP
         return keys
 
     def validateObligatoryKeys(self,dict):

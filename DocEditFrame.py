@@ -32,7 +32,10 @@ class DocEditFrame(tk.Frame):
             if(isinstance(value,int)):
                 typeEntry.insert(0,"int")
             if(isinstance(value,str)):
-                typeEntry.insert(0,"str")
+                if(value=="true" or value=="false"):
+                    typeEntry.insert(0,"bool")    
+                else:
+                    typeEntry.insert(0,"str")
             if(isinstance(value,float)):
                 typeEntry.insert(0,"float")
             if(isinstance(value,Decimal)):
@@ -82,21 +85,29 @@ class DocEditFrame(tk.Frame):
                 try:
                     value=int(value)
                 except :
-                    self.statusLabel["text"]="Error: Wrong data type"
+                    self.statusLabel["text"]="Error: Wrong data type. Expected int"
                     return None
             elif(type=="float"):
                 try:
                     value=float(value)
                 except:
-                    self.statusLabel["text"]="Error: Wrong data type"
+                    self.statusLabel["text"]="Error: Wrong data type Expected float"
                     return None
             elif(type=="Decimal"):
                 try:
                     value=Decimal(value)
                 except:
-                    self.statusLabel["text"]="Error: Wrong data type"
+                    self.statusLabel["text"]="Error: Wrong data type Expected Decimal"
                     return None
-            elif(type!="float") and (type!="int") and (type!="str")and (type!="Decimal"): 
+            elif(type=="bool"):
+                if value=="false":
+                    value=False
+                elif value=="true":
+                    value=True
+                else:
+                    self.statusLabel["text"]="Error: Wrong data type Expected Decimal"
+                    return None
+            elif(type!="float") and (type!="int") and (type!="str")and (type!="Decimal")and (type!="bool"): 
                 self.statusLabel["text"]="Error: Wrong data type"
                 return None
 

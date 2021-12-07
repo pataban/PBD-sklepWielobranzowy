@@ -4,7 +4,7 @@ from DataFrame.DataFrame import DataFrame
 import datetime
 
 def getTime():
-    datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+    return datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
 class RachunkiFrame(DataFrame):
     def __init__(self,master):
@@ -20,7 +20,7 @@ class RachunkiFrame(DataFrame):
         
         
     def getRecomendedKeys(self):
-        keys={"nrR":0,"data":getTime(),"nrP":0,"sposPlatnosci":"gotowka","zaplacony":False}    #ustawic dobry nrR
+        keys={"nrR":0,"data":getTime(),"nrP":0,"sposPlatnosci":"gotowka","zaplacony":"false"}    #ustawic dobry nrR
         return keys
 
     def validateObligatoryKeys(self,dict):
@@ -33,10 +33,11 @@ class RachunkiFrame(DataFrame):
     def createNewDocument(self,dict):
         super().createNewDocument(dict)
         tmp=dict["data"]
-        tmp=data.split(" ")
-        tmp[0].split(".")
-        tmp[1].split(":")
-        dict["data"]=datetime.datetime(tmp[0][0],tmp[0][1],tmp[0][2],tmp[1][0],tmp[1][1],tmp[1][2])
+        tmp=tmp.split(" ")
+        tmp[0]=tmp[0].split(".")
+        tmp[1]=tmp[1].split(":")
+        print(tmp)
+        dict["data"]=datetime.datetime(int(tmp[0][2]),int(tmp[0][1]),int(tmp[0][0]),int(tmp[1][0]),int(tmp[1][1]),int(tmp[1][2]))
         print(dict)
 
     def updateDocument(self,dict):
