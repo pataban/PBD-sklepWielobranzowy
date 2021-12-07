@@ -1,0 +1,43 @@
+import tkinter as tk
+from tkinter import ttk
+from DocEditFrame import DocEditFrame
+from DataFrame.DataFrame import DataFrame
+
+class PracownicyFrame(DataFrame):
+    def __init__(self,master):
+        super().__init__(master,recomendedKeys={"kod":0,"nazwa":"","cena":12.5})
+        
+        columns=("id","imie","nazwisko","nrP","login","haslo")
+        self.pracownicySheet=ttk.Treeview(self,column=columns,show="headings")
+        self.pracownicySheet["displaycolumns"]=columns[1:]
+        self.pracownicySheet.heading("imie", text="Imie")
+        self.pracownicySheet.heading("nazwisko", text="Nazwisko")
+        self.pracownicySheet.heading("nrP", text="NrP")
+        self.pracownicySheet.heading("login", text="Login")
+        self.pracownicySheet.heading("haslo", text="Haslo")
+        self.pracownicySheet.grid(row=2)
+        self.pracownicySheet.insert("","end",values=("id158631","testname","testsurname",147,"testLogin","testPass"))    
+                 #test data
+        
+        """pracownicy=self.data.getData("pracownicy")
+        for p in pracownicy:
+            print(p)
+            values=(p["imie"],p["nazwisko"],p["nrP"],p["login"],p["haslo"])
+            self.pracownicySheet.insert("","end",values=values)"""
+        
+    def validateObligatoryKeys(self,dict):
+        for key in self.recomendedKeys.keys():
+            if not key in dict.keys():
+                self.itemEditFrame.statusLabel["text"]="Error: missing obligatory fields"
+                return False
+        return True
+
+    def createNewDocument(self,dict):
+        super().createNewDocument(dict)
+        print(dict)
+
+    def updateDocument(self,dict):
+        super().updateDocument(dict)
+        print(dict)
+
+

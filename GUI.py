@@ -2,6 +2,10 @@ from DataHandler import DataHandler
 import tkinter as tk
 from tkinter import ttk
 from DataFrame import DataFrame
+from DataFrame.TowaryFrame import TowaryFrame
+from DataFrame.KlienciFrame import KlienciFrame
+from DataFrame.RachunkiFrame import RachunkiFrame
+from DataFrame.PracownicyFrame import PracownicyFrame
 
 class Gui(tk.Frame):
     def __init__(self, master=tk.Tk()):
@@ -78,24 +82,9 @@ class Gui(tk.Frame):
         if(self.towaryFrame!=None):
             self.towaryFrame.pack(side="top")
             return
-        self.towaryFrame=DataFrame(self)
+        self.towaryFrame=TowaryFrame(self)
         self.towaryFrame.pack(side="top")
         self.towaryFrame.backButton["command"]=self.showMenuFrame
-        
-        self.towarySheet=ttk.Treeview(self.towaryFrame,column=("nazwa","kod","cena"),show="headings")
-        #self.dataSheet.column("nazwa")
-        self.towarySheet.heading("nazwa", text="Nazwa")
-        self.towarySheet.heading("kod", text="Kod")
-        self.towarySheet.heading("cena", text="Cena")
-        self.towarySheet.grid(row=2)
-        self.towarySheet.insert("","end",values=("testname",123,12.56))                   #test data
-
-        towary=self.data.getData("towary")
-        for t in towary:
-            self.towarySheet.insert("","end",values=(t["nazwa"],t["kod"],t["cena"]))
-        
-        self.towaryFrame.editButton["command"]=lambda:print(self.towarySheet.item(self.towarySheet.selection()[0])["values"])
-
 
 
     def showKlienciFrame(self):
@@ -103,32 +92,9 @@ class Gui(tk.Frame):
         if(self.klienciFrame!=None):
             self.klienciFrame.pack(side="top")
             return
-        self.klienciFrame=DataFrame(self)
+        self.klienciFrame=KlienciFrame(self)
         self.klienciFrame.pack(side="top")
         self.klienciFrame.backButton["command"]=self.showMenuFrame
-
-        self.klienciSheet=ttk.Treeview(self.klienciFrame,column=("imie","nazwisko","nrK","nazwa","NIP"),show="headings")
-        #self.klienciSheet.column("nazwa")
-        self.klienciSheet.heading("imie", text="Imie")
-        self.klienciSheet.heading("nazwisko", text="Nazwisko")
-        self.klienciSheet.heading("nrK", text="NrK")
-        self.klienciSheet.heading("nazwa", text="Nazwa")
-        self.klienciSheet.heading("NIP", text="NIP")
-        self.klienciSheet.grid(row=2)
-        self.klienciSheet.insert("","end",values=("testname","testsurname",456))                   #test data
-        self.klienciSheet.insert("","end",values=("","","","testname","12345678"))                   #test data
-        
-        klienci=self.data.getData("klienci")
-        for k in klienci:
-            values=None
-            if("NIP" in k.keys()):
-                values=("","","",k["nazwa"],k["NIP"])
-            else:
-                values=(k["imie"],k["nazwisko"],k["nrK"],"","")
-            self.klienciSheet.insert("","end",values=values)
-        
-        self.klienciFrame.editButton["command"]=lambda:print(self.klienciSheet.item(self.klienciSheet.selection()[0])["values"])
-
 
 
     def showRachunkiFrame(self):
@@ -136,52 +102,19 @@ class Gui(tk.Frame):
         if(self.rachunkiFrame!=None):
             self.rachunkiFrame.pack(side="top")
             return
-        self.rachunkiFrame=DataFrame(self)
+        self.rachunkiFrame=RachunkiFrame(self)
         self.rachunkiFrame.pack(side="top")
         self.rachunkiFrame.backButton["command"]=self.showMenuFrame
-
-        self.rachunkiSheet=ttk.Treeview(self.rachunkiFrame,column=("nrR","data","nrP"),show="headings")
-        #self.rachunkiSheet.column("nazwa")
-        self.rachunkiSheet.heading("nrR", text="NrR")
-        self.rachunkiSheet.heading("data", text="Data")
-        self.rachunkiSheet.heading("nrP", text="NrP")
-        self.rachunkiSheet.grid(row=2)
-        self.rachunkiSheet.insert("","end",values=("123","dzisiejszaData",789))                   #test data
         
-        rachunki=self.data.getData("klienci","rachunki")        #####trzeba napisac osobna funkcje z dobrym querry 
-        """for r in rachunki:
-            values=(r["nrR"],r["data"],r["nrP"])
-            self.rachunkiSheet.insert("","end",values=values)
-        
-        self.rachunkiFrame.editButton["command"]=lambda:print(self.rachunkiSheet.item(self.rachunkiSheet.selection()[0])["values"])"""
 
     def showPracownicyFrame(self):
         self.hideAllFrames()
         if(self.pracownicyFrame!=None):
             self.pracownicyFrame.pack(side="top")
             return
-        self.pracownicyFrame=DataFrame(self)
+        self.pracownicyFrame=PracownicyFrame(self)
         self.pracownicyFrame.pack(side="top")
         self.pracownicyFrame.backButton["command"]=self.showMenuFrame
-
-        self.pracownicySheet=ttk.Treeview(self.pracownicyFrame,column=("imie","nazwisko","nrP","login","haslo"),show="headings")
-        #self.pracownicySheet.column("nazwa")
-        self.pracownicySheet.heading("imie", text="Imie")
-        self.pracownicySheet.heading("nazwisko", text="Nazwisko")
-        self.pracownicySheet.heading("nrP", text="NrP")
-        self.pracownicySheet.heading("login", text="Login")
-        self.pracownicySheet.heading("haslo", text="Haslo")
-        self.pracownicySheet.grid(row=2)
-        self.pracownicySheet.insert("","end",values=("testname","testsurname",147,"testLogin","testPass"))                   #test data
-        
-        pracownicy=self.data.getData("pracownicy")
-        for p in pracownicy:
-            print(p)
-            values=(p["imie"],p["nazwisko"],p["nrP"],p["login"],p["haslo"])
-            self.pracownicySheet.insert("","end",values=values)
-        
-        self.pracownicyFrame.editButton["command"]=lambda:print(self.pracownicySheet.item(self.pracownicySheet.selection()[0])["values"])
-
 
 
     def loginUser(self):
