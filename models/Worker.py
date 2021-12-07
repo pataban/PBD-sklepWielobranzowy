@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 class Worker:
     def __init__(self,
                  nrP,
@@ -41,3 +43,24 @@ class Worker:
             self.id = None
         else:
             self.id = object_id
+
+    @classmethod
+    def fromMongoDictionary(cls, worker_mong_dict):
+        return cls(
+            worker_mong_dict["nrP"],
+            worker_mong_dict["firstName"],
+            worker_mong_dict["secondName"],
+            worker_mong_dict["login"],
+            worker_mong_dict["password"],
+            worker_mong_dict["isSeller"],
+            worker_mong_dict["isManager"],
+            worker_mong_dict["isOwner"],
+            str(worker_mong_dict["_id"])
+        )
+
+    def toMongoDictionary(self):
+        worker_dict = vars(self).copy()
+        if 'id' in worker_dict:
+            worker_dict.update({'_id': ObjectId(self.id)})
+            worker_dict.pop('id')
+        return worker_dict

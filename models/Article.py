@@ -1,3 +1,5 @@
+from bson import Decimal128, ObjectId
+
 from decimal import Decimal
 
 
@@ -20,6 +22,24 @@ class Article:
             self.id = None
         else:
             self.id = object_id
+
+    @classmethod
+    def fromMongoDictionary(cls, article_mongo_dict):
+        return cls(
+            article_mongo_dict["code"],
+            article_mongo_dict["name"],
+            Decimal128.to_decimal(article_mongo_dict["actualPrice"]),
+            str(article_mongo_dict["_id"])
+        )
+
+    def toMongoDictionary(self):
+        article_dict = vars(self).copy()
+        if 'actualPrice' in article_dict:
+            article_dict.update({'actualPrice': Decimal128(article_dict['actualPrice'])})
+        if 'id' in article_dict:
+            article_dict.update({'_id': ObjectId(self.id)})
+            article_dict.pop('id')
+        return article_dict
 
     def __str__(self) -> str:
         return 'Article {' + \
