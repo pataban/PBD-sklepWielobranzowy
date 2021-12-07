@@ -4,20 +4,23 @@ from models.ClientOnlyDto import ClientOnlyDto
 from models.ClientWithBillsNumbersOnlyDto import ClientWithBillsNumbersOnlyDto
 from models.Client import Client
 
+
 class ClientRepository:
     def __init__(self, clientsMongoHandler):
         self._clients_handler = clientsMongoHandler
 
-    def findClientOnlyDto(self) -> [ClientOnlyDto]: #wszyscy klienci bez rachunków
+    def findClientOnlyDto(self) -> [ClientOnlyDto]:  # wszyscy klienci bez rachunków
         pass
 
-    def findByIdClientWithBillsNumbersOnlyDto(self) -> ClientWithBillsNumbersOnlyDto: #jeden klient tylko z listą numerów rachunków
+    def findByIdClientWithBillsNumbersOnlyDto(
+            self) -> ClientWithBillsNumbersOnlyDto:  # jeden klient tylko z listą numerów rachunków
         pass
 
-    def findBillDto(self) -> [BillWithArticlesNamesDto]: #wszystkie rachunki w postaci rachunku z artykułami z samymi nazwami
+    def findBillDto(self) -> [
+        BillWithArticlesNamesDto]:  # wszystkie rachunki w postaci rachunku z artykułami z samymi nazwami
         pass
 
-    def findBillByNumber(self) -> Bill: #jeden rachunek z wszystkimi artykułami (podpięte obiekty artykułów)
+    def findBillByNumber(self) -> Bill:  # jeden rachunek z wszystkimi artykułami (podpięte obiekty artykułów)
         pass
 
     def insert(self, newClient: Client) -> bool:
