@@ -50,7 +50,7 @@ class ShopService:  # future facade for all operations on shop database
     def findArticleById(self, article_id: str) -> Optional[Article]:
         return self._articleRepository.findById(article_id)
 
-    # wszystkie rachunki w postaci rachunku z artykułami w postaci samych id
+    # wszystkie rachunki w postaci rachunku bez listy produktów, z dodatkowym id klienta
     def findBills(self) -> [BillDto]:
         return self._clientRepository.findBillDto()
 
@@ -71,14 +71,23 @@ class ShopService:  # future facade for all operations on shop database
     def insertArticle(self, newArticle: Article) -> bool:
         return self._articleRepository.insert(newArticle)
 
-    def updateWorkerById(self):
+    # aktualizuje pracownika
+    # zazwyczaj z perspektywy listy pracowników, więc dto powinien już być przechowywany przez listę
+    # lub zazwyczaj należy pobrać pracownika z bazy, zmodyfikować i podać go tutaj :)
+    def updateWorker(self, updatedWorker: WorkerSafeDto) -> bool:
+        return self._workerRepository.update(updatedWorker)
+
+    # aktualizuje dane klienta
+    # wymaga klienta w postaci dto - rachunki klienta aktualizujemy inną metodą
+    # aktualizacja klienta raczej z perspektywy listy klientów, więc dto powinien już być przechowywany przez listę
+    def updateClient(self, updatedClient: ClientOnlyDto) -> bool:
         pass
 
-    def updateClientById(self):
-        pass
 
-    def updateArticleById(self):
-        pass
+    # aktualizuje artykuł
+    # tu łatwo: albo artykuł z listy, albo artykuł świeżo pobrany pojedynczo z bazy
+    def updateArticle(self, updatedArticle: Article) -> bool:
+        return self._articleRepository.update(updatedArticle)
 
     def removeWorkerById(self):
         pass
