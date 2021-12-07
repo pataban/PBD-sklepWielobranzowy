@@ -1,7 +1,8 @@
 from bson import ObjectId
 
+
 class WorkerSafeDto:
-    def __init__(self, worker_mongo_dict):  #WorkerSafeDto can be obtained only by logging in through WorkerRepository
+    def __init__(self, worker_mongo_dict):  # WorkerSafeDto can be obtained only by logging in through WorkerRepository
 
         self.nrP = worker_mongo_dict["workerNr"]
         self.firstName = worker_mongo_dict["firstName"]

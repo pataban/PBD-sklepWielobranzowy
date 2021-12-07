@@ -51,4 +51,3 @@ class Bill:
         if 'paymentMethod' in bill_dict:
             bill_dict.update({'paymentMethod': self.paymentMethod.name})
         return bill_dict
-

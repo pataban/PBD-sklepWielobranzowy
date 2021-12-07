@@ -48,8 +48,3 @@ class Article:
                ', name: ' + str(self.name) + \
                ', price: ' + str(self.actualPrice) + \
                '}'
-
-
-
-
-

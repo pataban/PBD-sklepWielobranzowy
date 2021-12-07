@@ -14,7 +14,7 @@ class Worker:
                  isManager=False,
                  isOwner=False,
                  object_id=None):  # object_id can be None if you want to insert new Worker
-        # otherwise object_id should be actually filled
+                                   # object_id should be actually filled otherwise
         if workerNr is None or not isinstance(workerNr, int):
             raise TypeError('Invalid argument: workerNr')
         if firstName is None or not isinstance(firstName, str):

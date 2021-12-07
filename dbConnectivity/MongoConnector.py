@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 
 
-class MongoHandler:
+class MongoConnector:
 
     def __init__(self):
         self._client = MongoClient("mongodb://localhost:27017")

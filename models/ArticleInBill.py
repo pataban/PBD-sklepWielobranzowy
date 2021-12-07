@@ -4,7 +4,7 @@ from decimal import Decimal
 from models.Article import Article
 
 
-class ArticleInBill:  # should be used only for new articleInBill creation
+class ArticleInBill:
     def __init__(self, article, quantity=1, purchasePrice=None):
         if article is None or not isinstance(article, Article):
             raise TypeError('Invalid argument: article')

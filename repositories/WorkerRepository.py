@@ -7,6 +7,7 @@ from models.WorkerSafeDto import WorkerSafeDto
 
 from resources.static.constants import *
 
+
 class WorkerRepository:
     def __init__(self, workersMongoHandler):
         self._workers_handler = workersMongoHandler
@@ -34,7 +35,7 @@ class WorkerRepository:
         inserted_id = insert_one_result.inserted_id
         if inserted_id is None:
             return False
-        newWorker.id = str(inserted_id)     # inserting new worker will automatically fill id field by new _id in db
+        newWorker.id = str(inserted_id)  # inserting new worker will automatically fill id field by new _id in db
         return True
 
     def update(self, updatedWorker: WorkerSafeDto) -> bool:
@@ -78,4 +79,3 @@ class WorkerRepository:
         if worker_mongo_dict is None:
             return None
         return WorkerSafeDto(worker_mongo_dict)
-
