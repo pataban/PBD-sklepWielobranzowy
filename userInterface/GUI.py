@@ -1,17 +1,16 @@
 from dbConnectivity.MongoConnector import MongoConnector
 import tkinter as tk
 from tkinter import ttk
-from DataFrame import DataFrame
-from DataFrame.TowaryFrame import TowaryFrame
-from DataFrame.KlienciFrame import KlienciFrame
-from DataFrame.RachunkiFrame import RachunkiFrame
-from DataFrame.PracownicyFrame import PracownicyFrame
+from userInterface.DataFrame import DataFrame
+from userInterface.DataFrame.TowaryFrame import TowaryFrame
+from userInterface.DataFrame.KlienciFrame import KlienciFrame
+from userInterface.DataFrame.RachunkiFrame import RachunkiFrame
+from userInterface.DataFrame.PracownicyFrame import PracownicyFrame
 
-class Gui(tk.Frame):
+class GUI(tk.Frame):
     def __init__(self, shopService, master=tk.Tk()):
         super().__init__(master)
-        self._shopService = shopService
-        self.data=MongoConnector()
+        self.shopService = shopService
         master.title("sklep wielobranzowy")
         self.pack()
         self.loginFrame=None
@@ -20,8 +19,7 @@ class Gui(tk.Frame):
         self.klienciFrame=None
         self.rachunkiFrame=None
         self.pracownicyFrame=None
-        self.userLogin=""
-        self.userPasss=""
+        self.user=None
         self.showLoginFrame()
 
     def showLoginFrame(self):
@@ -60,10 +58,11 @@ class Gui(tk.Frame):
         self.menuFrame=tk.Frame(self)
         self.menuFrame.pack(side="top")
 
-        self.loginLabel=tk.Label(self.menuFrame,text="User: "+self.userLogin)
-        self.loginLabel.grid(row=0,column=0)
+        tmp=self.user.firstName+" "+self.user.secondName+" ("+str(self.user.nrP)+")"
+        self.loginLabel=tk.Label(self.menuFrame,text="User: "+tmp)
+        self.loginLabel.grid(row=0,column=0,columnspan=3)
         logoutButton=tk.Button(self.menuFrame,text="Logout",command=self.logoutUser)
-        logoutButton.grid(row=0,column=1)
+        logoutButton.grid(row=0,column=3)
 
         towaryButton=tk.Button(self.menuFrame,text="Towary",command=self.showTowaryFrame)
         towaryButton.grid(row=1,column=0)
@@ -83,7 +82,7 @@ class Gui(tk.Frame):
         if(self.towaryFrame!=None):
             self.towaryFrame.pack(side="top")
             return
-        self.towaryFrame=TowaryFrame(self)
+        self.towaryFrame=TowaryFrame(self,self.shopService)
         self.towaryFrame.pack(side="top")
         self.towaryFrame.backButton["command"]=self.showMenuFrame
 
@@ -93,7 +92,7 @@ class Gui(tk.Frame):
         if(self.klienciFrame!=None):
             self.klienciFrame.pack(side="top")
             return
-        self.klienciFrame=KlienciFrame(self)
+        self.klienciFrame=KlienciFrame(self,self.shopService)
         self.klienciFrame.pack(side="top")
         self.klienciFrame.backButton["command"]=self.showMenuFrame
 
@@ -103,7 +102,7 @@ class Gui(tk.Frame):
         if(self.rachunkiFrame!=None):
             self.rachunkiFrame.pack(side="top")
             return
-        self.rachunkiFrame=RachunkiFrame(self)
+        self.rachunkiFrame=RachunkiFrame(self,self.shopService)
         self.rachunkiFrame.pack(side="top")
         self.rachunkiFrame.backButton["command"]=self.showMenuFrame
         
@@ -113,7 +112,7 @@ class Gui(tk.Frame):
         if(self.pracownicyFrame!=None):
             self.pracownicyFrame.pack(side="top")
             return
-        self.pracownicyFrame=PracownicyFrame(self)
+        self.pracownicyFrame=PracownicyFrame(self,self.shopService)
         self.pracownicyFrame.pack(side="top")
         self.pracownicyFrame.backButton["command"]=self.showMenuFrame
 
@@ -124,10 +123,9 @@ class Gui(tk.Frame):
             self.update()
             return
 
-        if(self.data.login(self.loginInput.get(),self.passInput.get())):
-            self.userLogin=self.loginInput.get()
+        self.user=self.shopService.login(self.loginInput.get(),self.passInput.get())
+        if(self.user!=None):
             self.loginInput.delete(0,1000)
-            self.userPass=self.passInput.get()
             self.passInput.delete(0,1000)  
             self.loginResultLabel["text"]=""  
             return self.showMenuFrame()
@@ -169,9 +167,4 @@ class Gui(tk.Frame):
         self.klienciFrame=None
         self.rachunkiFrame=None
         self.pracownicyFrame=None
-        self.userLogin=""
-        self.userPasss=""
-
-
-gui=Gui()
-gui.mainloop()
+        self.user=None

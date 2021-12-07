@@ -11,4 +11,11 @@ if __name__ == "__main__":
     workerRepository = WorkerRepository(mongoConnector.workersHandler)
     clientRepository = ClientRepository(mongoConnector.clientsHandler)
     shopService = ShopService(articleRepository, workerRepository, clientRepository)
-    GUI(shopService)
+
+    #shopService.delAll()
+    shopService.chkTestUser()
+    shopService.printAll()
+
+    gui=GUI(shopService)
+    gui.mainloop()
+

@@ -2,8 +2,8 @@ from tkinter import ttk
 from userInterface.DataFrame.DataFrame import DataFrame
 
 class KlienciFrame(DataFrame):
-    def __init__(self,master):
-        super().__init__(master)
+    def __init__(self,master,shopService):
+        super().__init__(master,shopService)
         
         columns=("id","imie","nazwisko","nrK","nazwa","NIP")
         self.klienciSheet=ttk.Treeview(self,column=columns,show="headings")

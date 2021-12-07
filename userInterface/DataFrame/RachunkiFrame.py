@@ -6,8 +6,8 @@ def getTime():
     return datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
 class RachunkiFrame(DataFrame):
-    def __init__(self,master):
-        super().__init__(master)
+    def __init__(self,master,shopService):
+        super().__init__(master,shopService)
         
         columns=("nrR","data","nrP")
         self.rachunkiSheet=ttk.Treeview(self,column=columns,show="headings")

@@ -3,8 +3,8 @@ from userInterface.DataFrame.DataFrame import DataFrame
 from decimal import Decimal
 
 class TowaryFrame(DataFrame):
-    def __init__(self,master):
-        super().__init__(master)
+    def __init__(self,master,shopService):
+        super().__init__(master,shopService)
         
         columns=("id","nazwa","kod","cena")
         self.towarySheet=ttk.Treeview(self,column=columns,show="headings")

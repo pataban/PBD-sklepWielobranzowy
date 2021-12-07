@@ -1,8 +1,9 @@
 import tkinter as tk
 from userInterface.DocEditFrame import DocEditFrame
 class DataFrame(tk.Frame):
-    def __init__(self,master):
+    def __init__(self,master,shopService):
         super().__init__(master)
+        self.shopService=shopService
         self.recomendedKeys=self.getRecomendedKeys()
         menuRow1=tk.Frame(self)
         menuRow1.grid(row=0)
