@@ -5,7 +5,7 @@ from DataFrame.DataFrame import DataFrame
 
 class PracownicyFrame(DataFrame):
     def __init__(self,master):
-        super().__init__(master,recomendedKeys={"kod":0,"nazwa":"","cena":12.5})
+        super().__init__(master)
         
         columns=("id","imie","nazwisko","nrP","login","haslo")
         self.pracownicySheet=ttk.Treeview(self,column=columns,show="headings")
@@ -25,7 +25,14 @@ class PracownicyFrame(DataFrame):
             values=(p["imie"],p["nazwisko"],p["nrP"],p["login"],p["haslo"])
             self.pracownicySheet.insert("","end",values=values)"""
         
+    def getRecomendedKeys(self):
+        keys={"nrP":0,"imie":"","nazwisko":"","login":"","haslo":""
+            ,"isSprzedawca":False,"isMenager":False,"isWlasciciel":False}       #ustawic dobry nrP
+        return keys
+
     def validateObligatoryKeys(self,dict):
+        if not super().validateObligatoryKeys(dict):
+            return False
         for key in self.recomendedKeys.keys():
             if not key in dict.keys():
                 self.itemEditFrame.statusLabel["text"]="Error: missing obligatory fields"

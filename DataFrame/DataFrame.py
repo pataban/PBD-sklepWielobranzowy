@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from DocEditFrame import DocEditFrame
 class DataFrame(tk.Frame):
-    def __init__(self,master,recomendedKeys):
+    def __init__(self,master):
         super().__init__(master)
-        self.recomendedKeys=recomendedKeys
+        self.recomendedKeys=self.getRecomendedKeys()
         menuRow1=tk.Frame(self)
         menuRow1.grid(row=0)
 
@@ -76,4 +76,11 @@ class DataFrame(tk.Frame):
         self.itemEditFrame.grid_forget()
         
     def validateObligatoryKeys(self,dict):
-        return False
+        for key in self.recomendedKeys.keys():
+            if key in dict.keys() and (type(dict[key])!=type(self.recomendedKeys[key])):
+                self.itemEditFrame.statusLabel["text"]="Error: obligatory/recomended field wrong type"
+                return False
+        return True
+    
+    def getRecomendedKeys(self):
+        return {}

@@ -1,5 +1,5 @@
 import tkinter as tk
-
+from decimal import Decimal
 
 
 class DocEditFrame(tk.Frame):
@@ -35,11 +35,15 @@ class DocEditFrame(tk.Frame):
                 typeEntry.insert(0,"str")
             if(isinstance(value,float)):
                 typeEntry.insert(0,"float")
+            if(isinstance(value,Decimal)):
+                typeEntry.insert(0,"Decimal")
         entry=tk.Entry(self.docFrame)
         if value is not None:
             entry.insert(0,str(value))
 
-        row=len(self.fields)
+        row=0
+        if len(self.fields)>0:
+            row=self.fields[-1][-1]+1
         label.grid(row=row,column=0)
         typeEntry.grid(row=row,column=1)
         entry.grid(row=row,column=2)
@@ -47,7 +51,7 @@ class DocEditFrame(tk.Frame):
         delButton=tk.Button(self.docFrame,text="del")
         delButton.grid(row=row,column=3)
 
-        field=(label,typeEntry,entry,delButton)
+        field=(label,typeEntry,entry,delButton,row)
         self.fields.append(field)
 
         delButton["command"]=lambda:self.removeField(field)
@@ -86,7 +90,13 @@ class DocEditFrame(tk.Frame):
                 except:
                     self.statusLabel["text"]="Error: Wrong data type"
                     return None
-            elif(type!="float") and (type!="int") and (type!="str"): 
+            elif(type=="Decimal"):
+                try:
+                    value=Decimal(value)
+                except:
+                    self.statusLabel["text"]="Error: Wrong data type"
+                    return None
+            elif(type!="float") and (type!="int") and (type!="str")and (type!="Decimal"): 
                 self.statusLabel["text"]="Error: Wrong data type"
                 return None
 

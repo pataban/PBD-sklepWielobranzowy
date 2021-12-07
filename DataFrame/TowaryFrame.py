@@ -2,10 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 from DocEditFrame import DocEditFrame
 from DataFrame.DataFrame import DataFrame
+from decimal import Decimal
 
 class TowaryFrame(DataFrame):
     def __init__(self,master):
-        super().__init__(master,recomendedKeys={"kod":0,"nazwa":"","cena":12.5})    #recomendet keys uzupelnic
+        super().__init__(master)
         
         columns=("id","nazwa","kod","cena")
         self.towarySheet=ttk.Treeview(self,column=columns,show="headings")
@@ -20,7 +21,13 @@ class TowaryFrame(DataFrame):
         for t in towary:
             self.towarySheet.insert("","end",values=(t["nazwa"],t["kod"],t["cena"]))"""
         
-    def validateObligatoryKeys(self,dict):      #pozostale validate
+    def getRecomendedKeys(self):
+        keys={"kod":0,"nazwa":"","cena":Decimal("0.00")}       #ustawic dobry kod
+        return keys
+
+    def validateObligatoryKeys(self,dict):
+        if not super().validateObligatoryKeys(dict):
+            return False
         for key in self.recomendedKeys.keys():
             if not key in dict.keys():
                 self.itemEditFrame.statusLabel["text"]="Error: missing obligatory fields"
