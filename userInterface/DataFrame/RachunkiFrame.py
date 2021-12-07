@@ -1,6 +1,5 @@
-import tkinter as tk
 from tkinter import ttk
-from DataFrame.DataFrame import DataFrame
+from userInterface.DataFrame.DataFrame import DataFrame
 import datetime
 
 def getTime():

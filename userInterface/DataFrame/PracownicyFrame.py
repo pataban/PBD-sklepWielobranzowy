@@ -1,7 +1,5 @@
-import tkinter as tk
 from tkinter import ttk
-from DocEditFrame import DocEditFrame
-from DataFrame.DataFrame import DataFrame
+from userInterface.DataFrame.DataFrame import DataFrame
 
 class PracownicyFrame(DataFrame):
     def __init__(self,master):

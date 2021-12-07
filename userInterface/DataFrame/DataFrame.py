@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
-from DocEditFrame import DocEditFrame
+from userInterface.DocEditFrame import DocEditFrame
 class DataFrame(tk.Frame):
     def __init__(self,master):
         super().__init__(master)

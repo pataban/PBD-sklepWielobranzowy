@@ -1,4 +1,4 @@
-from DataHandler import DataHandler
+from dbConnectivity.MongoConnector import MongoConnector
 import tkinter as tk
 from tkinter import ttk
 from DataFrame import DataFrame
@@ -8,9 +8,10 @@ from DataFrame.RachunkiFrame import RachunkiFrame
 from DataFrame.PracownicyFrame import PracownicyFrame
 
 class Gui(tk.Frame):
-    def __init__(self, master=tk.Tk()):
+    def __init__(self, shopService, master=tk.Tk()):
         super().__init__(master)
-        self.data=DataHandler()
+        self._shopService = shopService
+        self.data=MongoConnector()
         master.title("sklep wielobranzowy")
         self.pack()
         self.loginFrame=None
