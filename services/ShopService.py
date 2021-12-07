@@ -1,76 +1,124 @@
+from random import randint
+from typing import Optional
+
+from models.Article import Article
+from models.BillDto import BillDto
+from models.Client import Client
+from models.ClientOnlyDto import ClientOnlyDto
+from models.ClientWithBillsNumbersOnlyDto import ClientWithBillsNumbersOnlyDto
 from models.Worker import Worker
+from models.WorkerSafeDto import WorkerSafeDto
+from repositories.ArticleRepository import ArticleRepository
+from repositories.ClientRepository import ClientRepository
+from repositories.WorkerRepository import WorkerRepository
+from userInterface.DataFrame.RachunkiFrame import getTime
+
 
 class ShopService:  # future facade for all operations on shop database
-    def __init__(self, articleRepository, workerRepository, clientRepository):
+    def __init__(self,
+                 articleRepository: ArticleRepository,
+                 workerRepository: WorkerRepository,
+                 clientRepository: ClientRepository):
         self._articleRepository = articleRepository
         self._workerRepository = workerRepository
         self._clientRepository = clientRepository
 
+    # zwraca wszystkich pracowników BEZ loginów i haseł
+    def findWorkers(self) -> [WorkerSafeDto]:
+        return self._workerRepository.find()
 
-    def findWorkerById():
+    # jeśli nie znajdzie pracownika, zwraca None
+    # jeśli znajdzie, zwraca pracownika BEZ loginu i hasła
+    def findWorkerById(self, worker_id: str) -> Optional[WorkerSafeDto]:
+        return self._workerRepository.findById(worker_id)
+
+    # zwraca wszystkich klientów BEZ rachunków
+    def findClients(self) -> [ClientOnlyDto]:
+        return self._clientRepository.findClientOnlyDto()
+
+    # jeśli nie znajdzie clienta, zwraca None
+    # jeśli znajdzie, zwraca klient w postaci klienta tylko z listą NUMERÓW rachunków
+    def findClientById(self, client_id: str) -> Optional[ClientWithBillsNumbersOnlyDto]:
+        return self._clientRepository.findByIdClientWithBillsNumbersOnlyDto(client_id)
+
+    # tu najprościej, po prostu zwraca listę wszystkich artykułów :)
+    def findArticle(self) -> [Article]:
+        return self._articleRepository.find()
+
+    # jeśli nie znajdzie artykułu, zwraca None
+    # jeśli znajdzie, zwraca po prostu artykuł :)
+    def findArticleById(self, article_id: str) -> Optional[Article]:
+        return self._articleRepository.findById(article_id)
+
+    # wszystkie rachunki w postaci rachunku z artykułami w postaci samych id
+    def findBills(self) -> [BillDto]:
+        return self._clientRepository.findBillDto()
+
+    # wstawia nowego pracownika
+    # (wymagany pełny Worker z poprawnym nowym loginem i hasłem)
+    # (wymagane puste id - zostanie automatycznie uzupelnione po skutecznym dodaniu do bazy)
+    def insertWorker(self, newWorker: Worker) -> bool:
+        return self._workerRepository.insert(newWorker)
+
+    # wstawia nowego klienta
+    # (MOŻE zawierać rachunki na liście, które MOGĄ już zawierać produkty!)
+    # (wymagane puste id - zostanie automatycznie uzupelnione po skutecznym dodaniu do bazy)
+    def insertClient(self, newClient: Client) -> bool:
+        return self._clientRepository.insert(newClient)
+
+    # wstawia nowy produkt
+    # (wymagane puste id - zostanie automatycznie uzupelnione po skutecznym dodaniu do bazy)
+    def insertArticle(self, newArticle: Article) -> bool:
+        return self._articleRepository.insert(newArticle)
+
+    def updateWorkerById(self):
         pass
 
-    def findClientById():
+    def updateClientById(self):
         pass
 
-    def findArticleById():
+    def updateArticleById(self):
         pass
 
-    def insertWorker():
+    def removeWorkerById(self):
         pass
 
-    def insertClient():
+    def removeClientById(self):
         pass
 
-    def insertArticle():
+    def removeArticleById(self):
         pass
 
-    def updateWorkerById():
+    def generateNewKodTowaru(self):
         pass
 
-    def updateClientById():
+    def generateNewNrK(self):
         pass
 
-    def updateArticleById():
+    def generateNewNrP(self):
         pass
 
-    def removeWorkerById():
+    def generateNewNrR(self):
         pass
 
-    def removeClientById():
-        pass
+    # imitacja logowania
+    # jeśli logowanie niepoprawne, zwraca None
+    # jeśli logowanie poprawne zwraca pracownika w postaci okrojonej o dane do logowania
+    def login(self, login, password) -> Optional[WorkerSafeDto]:
+        return self._workerRepository.login(login, password)
 
-    def removeArticleById():
-        pass
-
-
-    def generateNewKodTowaru():
-        pass
-
-    def generateNewNrK():
-        pass
-
-    def generateNewNrP():
-        pass
-
-    def generateNewNrR():
-        pass
-
-    def login(self,login,password):
-        return self._workerRepository.login(login,password)
-
-    def chkTestUser(self):          #uzytkownik testowy
-        if(self._workerRepository.login("aaa","aaa")==None):
-            worker=Worker(111,"aaa","aaa","aaa","aaa",True,True,True)
+    def chkTestUser(self):  # uzytkownik testowy
+        if (self._workerRepository.login("aaa", "aaa") == None):
+            worker = Worker(111, "aaa", "aaa", "aaa", "aaa", True, True, True)
             self._workerRepository.insert(worker)
 
     def printAll(self):
         print("towary:")
-        tow=self._articleRepository.find()
+        tow = self._articleRepository.find()
         for t in tow:
             print(str(t))
         print("pracownicy:")
-        pra=self._workerRepository.find()
+        pra = self._workerRepository.find()
         for p in pra:
             print(str(p))
         print("klienci:")
@@ -82,64 +130,64 @@ class ShopService:  # future facade for all operations on shop database
         self._articleRepository._articles_handler.delete_many({})
         self._workerRepository._workers_handler.delete_many({})
         self._clientRepository._clients_handler.delete_many({})
-    
-    
 
-
-
-
-
-    def getData(self,collection,atribute=None,value=None):  #old
-        if(atribute==None and value==None):
+    def getData(self, collection, atribute=None, value=None):  # old
+        if (atribute == None and value == None):
             return self.db[collection].find({})
-        if(value==None):
+        if (value == None):
             return self.db[collection].find({atribute})
-        return self.db[collection].find({atribute:value})
+        return self.db[collection].find({atribute: value})
 
-    def makeTestData(self):     #old
-        for i in range(1,10):
-            prod={
-                'kod': randint(0,1000000),
-                'nazwa': "nazwa"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
-                'cena': float(randint(0,10000))/100
+    def makeTestData(self):  # old
+        for i in range(1, 10):
+            prod = {
+                'kod': randint(0, 1000000),
+                'nazwa': "nazwa" + str(randint(0, 9)) + str(randint(0, 9)) + str(randint(0, 9)) + str(
+                    randint(0, 9)) + str(randint(0, 9)),
+                'cena': float(randint(0, 10000)) / 100
             }
             self.towary.insert_one(prod)
-        for i in range(1,10):
-            prac={
-                'nrP': randint(0,1000000),
-                'imie': "imie"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
-                'nazwisko': "nazwisko"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
-                'login': "login"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
-                'haslo': "haslo"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
+        for i in range(1, 10):
+            prac = {
+                'nrP': randint(0, 1000000),
+                'imie': "imie" + str(randint(0, 9)) + str(randint(0, 9)) + str(randint(0, 9)) + str(
+                    randint(0, 9)) + str(randint(0, 9)),
+                'nazwisko': "nazwisko" + str(randint(0, 9)) + str(randint(0, 9)) + str(randint(0, 9)) + str(
+                    randint(0, 9)) + str(randint(0, 9)),
+                'login': "login" + str(randint(0, 9)) + str(randint(0, 9)) + str(randint(0, 9)) + str(
+                    randint(0, 9)) + str(randint(0, 9)),
+                'haslo': "haslo" + str(randint(0, 9)) + str(randint(0, 9)) + str(randint(0, 9)) + str(
+                    randint(0, 9)) + str(randint(0, 9)),
             }
             self.pracownicy.insert_one(prac)
-        for i in range(1,10):
-            kli=None
-            if(randint(0,1)==0):
-                kli={
-                    'NIP': randint(0,1000000),
-                    'nazwa': "nazwa"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
-                    'rachunki':[{
-                        'nrR':randint(0,1000000),
-                        'data':getTime(),
-                        'nrP':randint(0,1000000),
-                        'towary':[]
-                    }] 
+        for i in range(1, 10):
+            kli = None
+            if (randint(0, 1) == 0):
+                kli = {
+                    'NIP': randint(0, 1000000),
+                    'nazwa': "nazwa" + str(randint(0, 9)) + str(randint(0, 9)) + str(randint(0, 9)) + str(
+                        randint(0, 9)) + str(randint(0, 9)),
+                    'rachunki': [{
+                        'nrR': randint(0, 1000000),
+                        'data': getTime(),
+                        'nrP': randint(0, 1000000),
+                        'towary': []
+                    }]
                 }
             else:
-                kli={
-                    'imie': "imie"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
-                    'nazwisko': "nazwisko"+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9))+str(randint(0,9)),
-                    'nrK': randint(0,1000000),
-                    'rachunki':[{
-                        'nrR':randint(0,1000000),
-                        'data':getTime(),
-                        'nrP':randint(0,1000000),
-                        'towary':[]
-                    }] 
+                kli = {
+                    'imie': "imie" + str(randint(0, 9)) + str(randint(0, 9)) + str(randint(0, 9)) + str(
+                        randint(0, 9)) + str(randint(0, 9)),
+                    'nazwisko': "nazwisko" + str(randint(0, 9)) + str(randint(0, 9)) + str(randint(0, 9)) + str(
+                        randint(0, 9)) + str(randint(0, 9)),
+                    'nrK': randint(0, 1000000),
+                    'rachunki': [{
+                        'nrR': randint(0, 1000000),
+                        'data': getTime(),
+                        'nrP': randint(0, 1000000),
+                        'towary': []
+                    }]
                 }
             self.klienci.insert_one(kli)
-
-    
 
     # there will be many, many operations available...

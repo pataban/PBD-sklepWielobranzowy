@@ -1,5 +1,9 @@
+from typing import Optional
+
+from bson import ObjectId
+
 from models.Bill import Bill
-from models.BillWithArticlesNamesDto import BillWithArticlesNamesDto
+from models.BillDto import BillDto
 from models.ClientOnlyDto import ClientOnlyDto
 from models.ClientWithBillsNumbersOnlyDto import ClientWithBillsNumbersOnlyDto
 from models.Client import Client
@@ -10,18 +14,27 @@ class ClientRepository:
         self._clients_handler = clientsMongoHandler
 
     def findClientOnlyDto(self) -> [ClientOnlyDto]:  # wszyscy klienci bez rachunków
-        pass
+        client_only_dtos = []
+        for client_mongo_dict in self._clients_handler.find():
+            client_only_dtos.append(ClientOnlyDto(client_mongo_dict))
+        return client_only_dtos
 
     def findByIdClientWithBillsNumbersOnlyDto(
-            self) -> ClientWithBillsNumbersOnlyDto:  # jeden klient tylko z listą numerów rachunków
-        pass
+            self, client_id) -> Optional[ClientWithBillsNumbersOnlyDto]:  # jeden klient tylko z listą numerów rachunków
+        client_mongo_dict = self._clients_handler.find_one({'_id': ObjectId(client_id)})
+        if client_mongo_dict is None:
+            return None
+        return ClientWithBillsNumbersOnlyDto(client_mongo_dict)
 
     def findBillDto(self) -> [
-        BillWithArticlesNamesDto]:  # wszystkie rachunki w postaci rachunku z artykułami z samymi nazwami
-        pass
-
-    def findBillByNumber(self) -> Bill:  # jeden rachunek z wszystkimi artykułami (podpięte obiekty artykułów)
-        pass
+        BillDto]:  # wszystkie rachunki w postaci rachunku z artykułami w postaci samych id
+        bill_dtos = []
+        for client_mongo_dict in self._clients_handler.find():
+            if 'bills' in client_mongo_dict:
+                client_id = client_mongo_dict['_id']
+                for bill_mongo_dict in client_mongo_dict['bills']:
+                    bill_dtos.append(BillDto(bill_mongo_dict, client_id))
+        return bill_dtos
 
     def insert(self, newClient: Client) -> bool:
         if newClient is None:

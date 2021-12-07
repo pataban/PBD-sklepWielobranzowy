@@ -1,2 +1,0 @@
-class BillWithArticlesNamesDto:
-    pass
