@@ -5,7 +5,7 @@ from resources.static.constants import *
 
 class Worker:
     def __init__(self,
-                 nrP,
+                 workerNr,
                  firstName,
                  secondName,
                  login,
@@ -15,8 +15,8 @@ class Worker:
                  isOwner=False,
                  object_id=None):  # object_id can be None if you want to insert new Worker
         # otherwise object_id should be actually filled
-        if nrP is None or not isinstance(nrP, int):
-            raise TypeError('Invalid argument: nrP')
+        if workerNr is None or not isinstance(workerNr, int):
+            raise TypeError('Invalid argument: workerNr')
         if firstName is None or not isinstance(firstName, str):
             raise TypeError('Invalid argument: firstName')
         if secondName is None or not isinstance(secondName, str):
@@ -38,7 +38,7 @@ class Worker:
         if object_id is not None and not isinstance(object_id, str):
             raise TypeError('Invalid argument: object_id')
 
-        self.nrP = nrP
+        self.workerNr = workerNr
         self.firstName = firstName
         self.secondName = secondName
         self.login = login
@@ -54,7 +54,7 @@ class Worker:
     @classmethod
     def fromMongoDictionary(cls, worker_mongo_dict):
         return cls(
-            worker_mongo_dict["nrP"],
+            worker_mongo_dict["workerNr"],
             worker_mongo_dict["firstName"],
             worker_mongo_dict["secondName"],
             worker_mongo_dict["login"],
