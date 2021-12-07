@@ -1,5 +1,8 @@
 from bson import ObjectId
 
+from resources.static.constants import *
+
+
 class Worker:
     def __init__(self,
                  nrP,
@@ -10,8 +13,8 @@ class Worker:
                  isSeller=False,
                  isManager=False,
                  isOwner=False,
-                 object_id=None):  #object_id can be None if you want to insert new Worker
-                                   #otherwise object_id should be actually filled
+                 object_id=None):  # object_id can be None if you want to insert new Worker
+        # otherwise object_id should be actually filled
         if nrP is None or not isinstance(nrP, int):
             raise TypeError('Invalid argument: nrP')
         if firstName is None or not isinstance(firstName, str):
@@ -20,8 +23,12 @@ class Worker:
             raise TypeError('Invalid argument: secondName')
         if login is None or not isinstance(login, str):
             raise TypeError('Invalid argument: login')
+        if len(login) < MIN_LOGIN_LEN:
+            raise ValueError('Argument login is too short')
         if password is None or not isinstance(password, str):
             raise TypeError('Invalid argument: password')
+        if len(password) < MIN_PASSWORD_LEN:
+            raise ValueError('Argument password is too short')
         if not isinstance(isSeller, bool):
             raise TypeError('Invalid argument: isSeller')
         if not isinstance(isManager, bool):
@@ -45,17 +52,17 @@ class Worker:
             self.id = object_id
 
     @classmethod
-    def fromMongoDictionary(cls, worker_mong_dict):
+    def fromMongoDictionary(cls, worker_mongo_dict):
         return cls(
-            worker_mong_dict["nrP"],
-            worker_mong_dict["firstName"],
-            worker_mong_dict["secondName"],
-            worker_mong_dict["login"],
-            worker_mong_dict["password"],
-            worker_mong_dict["isSeller"],
-            worker_mong_dict["isManager"],
-            worker_mong_dict["isOwner"],
-            str(worker_mong_dict["_id"])
+            worker_mongo_dict["nrP"],
+            worker_mongo_dict["firstName"],
+            worker_mongo_dict["secondName"],
+            worker_mongo_dict["login"],
+            worker_mongo_dict["password"],
+            worker_mongo_dict["isSeller"],
+            worker_mongo_dict["isManager"],
+            worker_mongo_dict["isOwner"],
+            str(worker_mongo_dict["_id"])
         )
 
     def toMongoDictionary(self):
