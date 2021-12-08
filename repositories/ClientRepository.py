@@ -2,6 +2,7 @@ from typing import Optional
 
 from bson import ObjectId
 
+from models.ArticleInBill import ArticleInBill
 from models.Bill import Bill
 from models.BillDto import BillDto
 from models.ClientOnlyDto import ClientOnlyDto
@@ -73,6 +74,25 @@ class ClientRepository:
         if client_mongo_dict is None:
             return False
         client_mongo_dict['bills'].append(newBill.toMongoDictionary())
+        update_result = self._clients_handler.update_one({
+            '_id': client_mongo_dict['_id']
+        }, {
+            '$set': client_mongo_dict
+        })
+        return update_result.matched_count == 1
+
+    def addNewArticleInBill(self, client_id: str, billNr: int, newArticleInBill: ArticleInBill):
+        client_mongo_dict = self._clients_handler.find_one({'_id': ObjectId(client_id)})
+        if client_mongo_dict is None:
+            return False
+        bill_found = False
+        for bill in client_mongo_dict['bills']:
+            if bill['billNr'] == billNr:
+                bill_found = True
+                bill['articlesInBill'].append(newArticleInBill.toMongoDictionary())
+                break
+        if not bill_found:
+            return False
         update_result = self._clients_handler.update_one({
             '_id': client_mongo_dict['_id']
         }, {

@@ -2,6 +2,7 @@ from random import randint
 from typing import Optional
 
 from models.Article import Article
+from models.ArticleInBill import ArticleInBill
 from models.Bill import Bill
 from models.BillDto import BillDto
 from models.Client import Client
@@ -76,6 +77,11 @@ class ShopService:  # future facade for all operations on shop database
     # (wymagany pełny Bill)
     def insertBill(self, client_id: str, newBill: Bill) -> bool:
         return self._clientRepository.addNewBill(client_id, newBill)
+
+    # wstawia nowy produkt do rachunku o podanym numerze do klienta o podanym id
+    # (wymagany pełny ArticleInBill)
+    def insertArticleInBill(self, client_id: str, billNr: int, newArticleInBill: ArticleInBill) -> bool:
+        return self._clientRepository.addNewArticleInBill(client_id, billNr, newArticleInBill)
 
     # aktualizuje pracownika
     # zazwyczaj z perspektywy listy pracowników, więc dto powinien już być przechowywany przez listę
