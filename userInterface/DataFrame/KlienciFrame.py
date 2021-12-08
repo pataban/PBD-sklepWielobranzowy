@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 from userInterface.DataFrame.DataFrame import DataFrame
 from models.Client import Client
@@ -10,6 +11,13 @@ class KlienciFrame(DataFrame):
         columns=("id","imie","nazwisko","nrK","nazwa","NIP","tel","adres")
         self.klienciSheet=ttk.Treeview(self,column=columns,show="headings")
         self.klienciSheet["displaycolumns"]=columns[1:]
+        self.klienciSheet.column("imie", width=100,anchor=tk.W)
+        self.klienciSheet.column("nazwisko", width=100,anchor=tk.W)
+        self.klienciSheet.column("nrK", width=100,anchor=tk.E)
+        self.klienciSheet.column("nazwa", width=100,anchor=tk.W)
+        self.klienciSheet.column("NIP", width=100,anchor=tk.E)
+        self.klienciSheet.column("tel", width=100,anchor=tk.E)
+        self.klienciSheet.column("adres", width=200,anchor=tk.W)
         self.klienciSheet.heading("imie", text="Imie")
         self.klienciSheet.heading("nazwisko", text="Nazwisko")
         self.klienciSheet.heading("nrK", text="NrK")

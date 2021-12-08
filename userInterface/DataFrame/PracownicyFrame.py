@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 from userInterface.DataFrame.DataFrame import DataFrame
 from models.Worker import Worker
@@ -11,6 +12,12 @@ class PracownicyFrame(DataFrame):
         columns=("id","imie","nazwisko","nrP","sprzedawca","menager","wlasciciel")
         self.pracownicySheet=ttk.Treeview(self,column=columns,show="headings")
         self.pracownicySheet["displaycolumns"]=columns[1:]
+        self.pracownicySheet.column("imie", width=100,anchor=tk.W)
+        self.pracownicySheet.column("nazwisko", width=100,anchor=tk.W)
+        self.pracownicySheet.column("nrP", width=100,anchor=tk.E)
+        self.pracownicySheet.column("sprzedawca", width=100,anchor=tk.W)
+        self.pracownicySheet.column("menager", width=100,anchor=tk.W)
+        self.pracownicySheet.column("wlasciciel", width=100,anchor=tk.W)
         self.pracownicySheet.heading("imie", text="Imie")
         self.pracownicySheet.heading("nazwisko", text="Nazwisko")
         self.pracownicySheet.heading("nrP", text="NrP")

@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 from userInterface.DataFrame.DataFrame import DataFrame
 from decimal import Decimal
@@ -11,6 +12,9 @@ class TowaryFrame(DataFrame):
         columns=("id","nazwa","kod","cena")
         self.towarySheet=ttk.Treeview(self,column=columns,show="headings")
         self.towarySheet["displaycolumns"]=columns[1:]
+        self.towarySheet.column("nazwa", width=200,anchor=tk.W)
+        self.towarySheet.column("kod", width=100,anchor=tk.E)
+        self.towarySheet.column("cena", width=100,anchor=tk.E)
         self.towarySheet.heading("nazwa", text="Nazwa")
         self.towarySheet.heading("kod", text="Kod")
         self.towarySheet.heading("cena", text="Cena")

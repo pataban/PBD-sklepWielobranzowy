@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import ttk
 from userInterface.DataFrame.DataFrame import DataFrame
 import datetime
@@ -16,13 +17,17 @@ class RachunkiFrame(DataFrame):
         columns=("clientId","nrR","data","nrP","metodaPlatnosci","czyZaplacony")
         self.rachunkiSheet=ttk.Treeview(self,column=columns,show="headings")
         self.rachunkiSheet["displaycolumns"]=columns[1:]
+        self.rachunkiSheet.column("nrR", width=150,anchor=tk.E)
+        self.rachunkiSheet.column("data", width=150,anchor=tk.W)
+        self.rachunkiSheet.column("nrP", width=100,anchor=tk.E)
+        self.rachunkiSheet.column("metodaPlatnosci", width=200,anchor=tk.W)
+        self.rachunkiSheet.column("czyZaplacony", width=100,anchor=tk.W)
         self.rachunkiSheet.heading("nrR", text="NrR")
         self.rachunkiSheet.heading("data", text="Data")
         self.rachunkiSheet.heading("nrP", text="NrP")
         self.rachunkiSheet.heading("metodaPlatnosci", text="etoda Platnosci")
         self.rachunkiSheet.heading("czyZaplacony", text="Czy Zaplacony")
         self.rachunkiSheet.grid(row=2)
-        #self.rachunkiSheet.insert("","end",values=("123","dzisiejszaData",789))                   #test data
         
         self.fillSheet(self.shopService.findBills())
 
