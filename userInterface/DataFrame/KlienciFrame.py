@@ -32,6 +32,33 @@ class KlienciFrame(DataFrame):
             self.klienciSheet.insert("","end",values=(c.object_id,c.firstName,c.secondName,c.clientNr,c.name,c.vatId,c.telephone,c.address))
         
         
+    def searchButtonListener(self):
+        category=self.categoryInput.get()
+        value=self.valueInput.get()
+        if(category=="nrK")or(category=="nrk"):
+            try:
+                value=int(value)
+            except:
+                return
+            self.klienciSheet.delete(*self.klienciSheet.get_children())
+            res=self.shopService.findClientByClientNr(value)
+            if(res==None):
+                res=[]
+            else:
+                res=[res]
+            self.fillSheet(res)
+        elif(category=="NIP" or category=="nip" or category=="Nip"):
+            self.klienciSheet.delete(*self.klienciSheet.get_children())
+            res=self.shopService.findClientByVatId(value)
+            if(res==None):
+                res=[]
+            else:
+                res=[res]
+            self.fillSheet(res)
+        elif(category=="" and value==""):
+            self.loadFullSheet()
+
+
     def getRecomendedKeys(self):
         keys={"imie":"","nazwisko":"","nrK":self.shopService.generateNewNrK(),"nazwa":"","NIP":"","tel":"","adres":""}
         return keys
@@ -60,9 +87,12 @@ class KlienciFrame(DataFrame):
         except:
             return
         
-        klient=self.shopService.findClientByClientNr(selected[3])
-        if(klient==None):
-            klient=self.shopService.findClientByVatId(selected[5])
+        klient=None
+        print(selected)
+        if selected[3]!="None":
+            klient=self.shopService.findClientByClientNr(selected[3])
+        else:
+            klient=self.shopService.findClientByVatId(str(selected[5]))
 
         keys={"imie":klient.firstName,"nazwisko":klient.secondName,"nrK":klient.clientNr,"nazwa":klient.name,"NIP":klient.vatId,"tel":klient.telephone,"adres":klient.address}
         self.itemEditFrame=DocEditFrame(self,"Edytowanie elementu:",keys)

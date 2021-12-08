@@ -26,6 +26,25 @@ class TowaryFrame(DataFrame):
         for a in articles:
             self.towarySheet.insert("","end",values=(a.id,a.name,a.code,a.actualPrice))
 
+    def searchButtonListener(self):
+        category=self.categoryInput.get()
+        value=self.valueInput.get()
+        if(category=="kod" or category== "code"):
+            try:
+                value=int(value)
+            except:
+                return
+            self.towarySheet.delete(*self.towarySheet.get_children())
+            res=self.shopService.findArticleByCode(value)
+            if(res==None):
+                res=[]
+            else:
+                res=[res]
+            self.fillSheet(res)
+        elif(category=="" and value==""):
+            self.loadFullSheet()
+
+
     def getRecomendedKeys(self):
         keys={"kod":self.shopService.generateNewKodTowaru(),"nazwa":"","cena":Decimal("0.00")}
         return keys

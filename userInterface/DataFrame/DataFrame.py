@@ -26,16 +26,14 @@ class DataFrame(tk.Frame):
         categoryLabel=tk.Label(menuRow2,text="Category:")
         categoryLabel.grid(row=0,column=0)
         self.categoryInput=tk.Entry(menuRow2)
-        self.categoryInput.insert(0,"name")                           #test defoult data
         self.categoryInput.grid(row=0,column=1)
         
         valueLabel=tk.Label(menuRow2,text="Value:")
         valueLabel.grid(row=0,column=2)
         self.valueInput=tk.Entry(menuRow2)
-        self.valueInput.insert(0,"chleb")                           #test defoult data
         self.valueInput.grid(row=0,column=3)
 
-        self.searchButton=tk.Button(menuRow2,text="Search")
+        self.searchButton=tk.Button(menuRow2,text="Search",command=self.searchButtonListener)
         self.searchButton.grid(row=0,column=4)
 
     def loadFullSheet(self):
@@ -55,8 +53,8 @@ class DataFrame(tk.Frame):
     def delButtonListener(self):
         pass
 
-    def searchButtonListener(self):###TODO
-         return
+    def searchButtonListener(self):
+        pass
 
 
     def createNewDocument(self,dict):
