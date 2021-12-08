@@ -17,7 +17,7 @@ class DataFrame(tk.Frame):
         self.editButton=tk.Button(menuRow1,text="Edit",command=self.editButtonListener)
         self.editButton.grid(row=0,column=2)
         
-        self.delButton=tk.Button(menuRow1,text="Delete")
+        self.delButton=tk.Button(menuRow1,text="Delete",command=self.delButtonListener)
         self.delButton.grid(row=0,column=3)
 
         menuRow2=tk.Frame(self)
@@ -38,24 +38,22 @@ class DataFrame(tk.Frame):
         self.searchButton=tk.Button(menuRow2,text="Search")
         self.searchButton.grid(row=0,column=4)
 
+    def loadFullSheet(self):
+        pass
+
+    def fillSheet(self,documents):
+        pass
+
     def newButtonListener(self):
         self.itemEditFrame=DocEditFrame(self,"Dodawanie nowego elementu:",self.recomendedKeys)
         self.itemEditFrame.grid(row=5)
         self.itemEditFrame.confirmButton["command"]=lambda:self.createNewDocument(self.itemEditFrame.getItem())
 
     def editButtonListener(self):
-        selected=self.towarySheet.item(self.towarySheet.selection()[0])["values"]
-            ###TODO
-
-
-        self.itemEditFrame=DocEditFrame(self,"Edytowanie elementu:","""""""""""")
-        self.itemEditFrame.grid(row=5)
-        self.itemEditFrame.confirmButton["command"]=lambda:self.updateDocument(self.itemEditFrame.getItem())
-
+        pass
 
     def delButtonListener(self):
-        selected=self.towarySheet.item(self.towarySheet.selection()[0])["values"]
-        ###TODO
+        pass
 
     def searchButtonListener(self):###TODO
          return
@@ -71,10 +69,11 @@ class DataFrame(tk.Frame):
 
     def updateDocument(self,dict):
         if dict==None:
-            return
+            return False
         if(not self.validateObligatoryKeys(dict)):
-            return
+            return False
         self.itemEditFrame.grid_forget()
+        return True
         
     def validateObligatoryKeys(self,dict):
         for key in self.recomendedKeys.keys():

@@ -15,6 +15,7 @@ class RachunkiFrame(DataFrame):
 
         columns=("clientId","nrR","data","nrP","metodaPlatnosci","czyZaplacony")
         self.rachunkiSheet=ttk.Treeview(self,column=columns,show="headings")
+        self.rachunkiSheet["displaycolumns"]=columns[1:]
         self.rachunkiSheet.heading("nrR", text="NrR")
         self.rachunkiSheet.heading("data", text="Data")
         self.rachunkiSheet.heading("nrP", text="NrP")
@@ -31,7 +32,7 @@ class RachunkiFrame(DataFrame):
         
 
     def getRecomendedKeys(self):
-        keys={"nrR":0,"nrK":0,"NIP":"","data":getTime(),"metodaPlatnosci":"gotowka","zaplacony":"false"}    #ustawic dobry nrR
+        keys={"nrR":self.shopService.generateNewNrR(),"nrK":0,"NIP":"","data":getTime(),"metodaPlatnosci":"gotowka","zaplacony":"false"}
         return keys
 
     def validateObligatoryKeys(self,dict):
@@ -50,6 +51,7 @@ class RachunkiFrame(DataFrame):
         articles=self.artykulyFrame.getList()
         if articles==None:
             return False
+        self.artykulyFrame.grid_forget()
         tmp=dict["data"]
         tmp=tmp.split(" ")
         tmp[0]=tmp[0].split(".")

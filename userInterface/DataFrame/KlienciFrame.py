@@ -1,6 +1,7 @@
 from tkinter import ttk
 from userInterface.DataFrame.DataFrame import DataFrame
 from models.Client import Client
+from userInterface.DocEditFrame import DocEditFrame
 
 class KlienciFrame(DataFrame):
     def __init__(self,master,shopService):
@@ -20,6 +21,10 @@ class KlienciFrame(DataFrame):
         self.klienciSheet.insert("","end",values=("id4456","testname","testsurname",456))              #test data
         self.klienciSheet.insert("","end",values=("id87964","","","","testname","12345678"))            #test data
 
+        self.loadFullSheet()
+
+    def loadFullSheet(self):
+        self.klienciSheet.delete(*self.klienciSheet.get_children())
         self.fillSheet(self.shopService.findClients())
 
     def fillSheet(self,clients):
@@ -28,7 +33,7 @@ class KlienciFrame(DataFrame):
         
         
     def getRecomendedKeys(self):
-        keys={"imie":"","nazwisko":"","nrK":0,"nazwa":"","NIP":"","tel":"","adres":""}   #ustawic dobry nrK
+        keys={"imie":"","nazwisko":"","nrK":self.shopService.generateNewNrK(),"nazwa":"","NIP":"","tel":"","adres":""}
         return keys
         
     def validateObligatoryKeys(self,dict):
@@ -49,8 +54,58 @@ class KlienciFrame(DataFrame):
         if(self.shopService.insertClient(client)):
             self.klienciSheet.insert("","end",values=(client.object_id,client.firstName,client.secondName,client.clientNr,client.name,client.vatId,client.telephone,client.address))
 
-    def updateDocument(self,dict):  ###TODO
-        super().updateDocument(dict)
-        print(dict)
+    def editButtonListener(self):
+        try:
+            selected=self.klienciSheet.item(self.klienciSheet.selection()[0])["values"]
+        except:
+            return
+        
+        klient=self.shopService.findClientByClientNr(selected[3])
+        if(klient==None):
+            klient=self.shopService.findClientByVatId(selected[5])
+
+        keys={"imie":klient.firstName,"nazwisko":klient.secondName,"nrK":klient.clientNr,"nazwa":klient.name,"NIP":klient.vatId,"tel":klient.telephone,"adres":klient.address}
+        self.itemEditFrame=DocEditFrame(self,"Edytowanie elementu:",keys)
+        self.itemEditFrame.grid(row=5)
+        self.itemEditFrame.confirmButton["command"]=lambda:self.updateDocument(self.itemEditFrame.getItem())
 
 
+    def updateDocument(self,dict):
+        if not super().updateDocument(dict):
+            return False
+        
+        klient=None
+        if "nrK" in dict.keys():
+            klient=self.shopService.findClientByClientNr(dict["nrK"])
+        if(klient==None):
+            klient=self.shopService.findClientByVatId(dict["NIP"])
+        
+        if "imie" in dict.keys():
+            klient.firstName =dict["imie"]
+        if "nazwisko" in dict.keys():
+            klient.secondName =dict["nazwisko"]
+        if "nazwa" in dict.keys():
+            klient.name =dict["nazwa"]
+        if "telefon" in dict.keys():
+            klient.telephone =dict["telefon"]
+        if "NIP" in dict.keys():
+            klient.vatId =dict["NIP"]
+        if "adres" in dict.keys():
+            klient.address =dict["adres"]
+        if "nrK" in dict.keys():
+            klient.clientNr =dict["nrK"]
+
+        if(self.shopService.updateClient(klient)):
+            self.klienciSheet.insert("","end",values=(klient.object_id,klient.firstName,klient.secondName,klient.clientNr,klient.name,klient.vatId,klient.telephone,klient.address))
+
+        self.loadFullSheet()
+
+
+    def delButtonListener(self):
+        try:
+            selectedId=self.klienciSheet.item(self.klienciSheet.selection()[0])["values"][0]
+        except:
+            return None
+        self.shopService.removeClientById(selectedId)
+
+        self.loadFullSheet()

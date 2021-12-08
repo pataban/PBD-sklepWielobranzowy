@@ -7,7 +7,7 @@ class TowaryWRachunkuFrame(tk.Frame):
     def __init__(self,master,shopService):
         super().__init__(master)
         self.shopService=shopService
-        titleLabel=tk.Label(self,text="artykuly")
+        titleLabel=tk.Label(self,text="artykuly (kod, ilosc, cena):")
         titleLabel.grid(row=0)
 
         self.docFrame=tk.Frame(self)

@@ -32,7 +32,7 @@ class DocEditFrame(tk.Frame):
             if(isinstance(value,int)):
                 typeEntry.insert(0,"int")
             if(isinstance(value,str)):
-                if(value=="true" or value=="false"):
+                if(value=="true" or value=="false" or value=="True" or value=="False"):
                     typeEntry.insert(0,"bool")    
                 else:
                     typeEntry.insert(0,"str")
@@ -100,7 +100,7 @@ class DocEditFrame(tk.Frame):
                     self.statusLabel["text"]="Error: Wrong data type Expected Decimal"
                     return None
             elif(type=="bool"):
-                if value!="false" and value!="true":
+                if value!="false" and value!="true" and value!="False" and value!="True":
                     self.statusLabel["text"]="Error: Wrong data type Expected bool"
                     return None
             elif(type!="float") and (type!="int") and (type!="str")and (type!="Decimal")and (type!="bool"): 
