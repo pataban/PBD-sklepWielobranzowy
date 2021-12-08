@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from models.Bill import Bill
 
 
@@ -24,7 +26,7 @@ class Client:
             raise TypeError('Invalid argument: vatId')
         if address is not None and not isinstance(address, str):
             raise TypeError('Invalid argument: address')
-        if clientNr is not None and not isinstance(clientNr, str):
+        if clientNr is not None and not isinstance(clientNr, int):
             raise TypeError('Invalid argument: clientNr')
         if bills is not None:
             if not isinstance(bills, list):
@@ -61,4 +63,7 @@ class Client:
         for key in list(client_dict.keys()):
             if client_dict[key] is None:
                 client_dict.pop(key)
+        if 'object_id' in client_dict:
+            client_dict.update({'_id': ObjectId(self.object_id)})
+            client_dict.pop('object_id')
         return client_dict

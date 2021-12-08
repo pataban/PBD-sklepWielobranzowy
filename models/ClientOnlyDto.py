@@ -1,3 +1,6 @@
+from bson import ObjectId
+
+
 class ClientOnlyDto:
     def __init__(self, clientMongoDict):
         self.firstName = clientMongoDict.get('firstName')
@@ -20,3 +23,13 @@ class ClientOnlyDto:
                ', clientNr: ' + str(self.clientNr) + \
                ', object_id: ' + str(self.object_id) + \
                '}'
+
+    def toMongoDictionary(self):
+        client_dict = vars(self).copy()
+        for key in list(client_dict.keys()):
+            if client_dict[key] is None:
+                client_dict.pop(key)
+        if 'object_id' in client_dict:
+            client_dict.update({'_id': ObjectId(self.object_id)})
+            client_dict.pop('object_id')
+        return client_dict

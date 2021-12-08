@@ -50,12 +50,35 @@ class ClientRepository:
         newClient.object_id = str(inserted_id)
         return True
 
+    def update(self, updatedClient: ClientOnlyDto) -> bool:
+        if updatedClient is None or not isinstance(updatedClient, ClientOnlyDto):
+            raise TypeError('Invalid argument: updatedClient')
+        updated_client_dict = updatedClient.toMongoDictionary()
+        update_result = self._clients_handler.update_one({
+            '_id': updated_client_dict['_id']
+        }, {
+            '$set': updated_client_dict
+        })
+        return update_result.matched_count == 1
+
     def remove(self, client_id: str) -> bool:
         delete_result = self._clients_handler.delete_one({
             '_id': ObjectId(client_id)
         })
         deleted_count = delete_result.deleted_count
         return deleted_count >= 1
+
+    def addNewBill(self, client_id: str, newBill: Bill) -> bool:
+        client_mongo_dict = self._clients_handler.find_one({'_id': ObjectId(client_id)})
+        if client_mongo_dict is None:
+            return False
+        client_mongo_dict['bills'].append(newBill.toMongoDictionary())
+        update_result = self._clients_handler.update_one({
+            '_id': client_mongo_dict['_id']
+        }, {
+            '$set': client_mongo_dict
+        })
+        return update_result.matched_count == 1
 
     # def removeAllCreatedByWorker(self, workerNr: int):
     #     for client_mongo_dict in self._clients_handler.find({

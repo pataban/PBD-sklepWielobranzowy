@@ -2,6 +2,7 @@ from random import randint
 from typing import Optional
 
 from models.Article import Article
+from models.Bill import Bill
 from models.BillDto import BillDto
 from models.Client import Client
 from models.ClientOnlyDto import ClientOnlyDto
@@ -71,6 +72,11 @@ class ShopService:  # future facade for all operations on shop database
     def insertArticle(self, newArticle: Article) -> bool:
         return self._articleRepository.insert(newArticle)
 
+    # wstawia nowy rachunek do klienta o podanym id
+    # (wymagany pełny Bill)
+    def insertBill(self, client_id: str, newBill: Bill) -> bool:
+        return self._clientRepository.addNewBill(client_id, newBill)
+
     # aktualizuje pracownika
     # zazwyczaj z perspektywy listy pracowników, więc dto powinien już być przechowywany przez listę
     # lub zazwyczaj należy pobrać pracownika z bazy, zmodyfikować i podać go tutaj :)
@@ -79,9 +85,10 @@ class ShopService:  # future facade for all operations on shop database
 
     # aktualizuje dane klienta
     # wymaga klienta w postaci dto - rachunki klienta aktualizujemy inną metodą
-    # aktualizacja klienta raczej z perspektywy listy klientów, więc dto powinien już być przechowywany przez listę
+    # aktualizacja klienta raczej z perspektywy listy klientów, więc dto powinien już być przechowywany
+    # na liście, po pobraniu przez findClients()
     def updateClient(self, updatedClient: ClientOnlyDto) -> bool:
-        pass
+        return self._clientRepository.update(updatedClient)
 
     # aktualizuje dane rachunku
     # wymaga rachunku w postaci dto - przedmioty na rachunku aktualizujemy inną metodą
