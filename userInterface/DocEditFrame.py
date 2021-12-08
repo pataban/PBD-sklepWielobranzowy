@@ -100,12 +100,8 @@ class DocEditFrame(tk.Frame):
                     self.statusLabel["text"]="Error: Wrong data type Expected Decimal"
                     return None
             elif(type=="bool"):
-                if value=="false":
-                    value=False
-                elif value=="true":
-                    value=True
-                else:
-                    self.statusLabel["text"]="Error: Wrong data type Expected Decimal"
+                if value!="false" and value!="true":
+                    self.statusLabel["text"]="Error: Wrong data type Expected bool"
                     return None
             elif(type!="float") and (type!="int") and (type!="str")and (type!="Decimal")and (type!="bool"): 
                 self.statusLabel["text"]="Error: Wrong data type"

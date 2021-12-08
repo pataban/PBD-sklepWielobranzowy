@@ -1,11 +1,12 @@
 from tkinter import ttk
 from userInterface.DataFrame.DataFrame import DataFrame
+from models.Client import Client
 
 class KlienciFrame(DataFrame):
     def __init__(self,master,shopService):
         super().__init__(master,shopService)
         
-        columns=("id","imie","nazwisko","nrK","nazwa","NIP")
+        columns=("id","imie","nazwisko","nrK","nazwa","NIP","tel","adres")
         self.klienciSheet=ttk.Treeview(self,column=columns,show="headings")
         self.klienciSheet["displaycolumns"]=columns[1:]
         self.klienciSheet.heading("imie", text="Imie")
@@ -13,21 +14,21 @@ class KlienciFrame(DataFrame):
         self.klienciSheet.heading("nrK", text="NrK")
         self.klienciSheet.heading("nazwa", text="Nazwa")
         self.klienciSheet.heading("NIP", text="NIP")
+        self.klienciSheet.heading("tel", text="Tel")
+        self.klienciSheet.heading("adres", text="Adres")
         self.klienciSheet.grid(row=2)
         self.klienciSheet.insert("","end",values=("id4456","testname","testsurname",456))              #test data
         self.klienciSheet.insert("","end",values=("id87964","","","","testname","12345678"))            #test data
+
+        self.fillSheet(self.shopService.findClients())
+
+    def fillSheet(self,clients):
+        for c in clients:
+            self.klienciSheet.insert("","end",values=(c.object_id,c.firstName,c.secondName,c.clientNr,c.name,c.vatId,c.telephone,c.address))
         
-        """klienci=self.data.getData("klienci")
-        for k in klienci:
-            values=None
-            if("NIP" in k.keys()):
-                values=("","","",k["nazwa"],k["NIP"])
-            else:
-                values=(k["imie"],k["nazwisko"],k["nrK"],"","")
-            self.klienciSheet.insert("","end",values=values)"""
         
     def getRecomendedKeys(self):
-        keys={"imie":"","nazwisko":"","nrK":0,"nazwa":"","NIP":0}   #ustawic dobry nrK
+        keys={"imie":"","nazwisko":"","nrK":0,"nazwa":"","NIP":0,"tel":0,"adres":""}   #ustawic dobry nrK
         return keys
         
     def validateObligatoryKeys(self,dict):
@@ -39,10 +40,17 @@ class KlienciFrame(DataFrame):
         return True
 
     def createNewDocument(self,dict):
-        super().createNewDocument(dict)
-        print(dict)
+        if not super().createNewDocument(dict):
+            return False
+        for key in self.recomendedKeys:
+            if not key in dict:
+                dict[key]=None
+        client=Client(dict["imie"],dict["nazwisko"],dict["nazwa"],dict["tel"],dict["NIP"],dict["adres"],dict["nrK"])
+        if(self.shopService.insertClient(client)):
+            self.klienciSheet.insert("","end",values=(c.object_id,c.firstName,c.secondName,c.clientNr,c.name,c.vatId,c.telephone,c.address))
+        #sprawdzic dodawanie i wczytywanie
 
-    def updateDocument(self,dict):
+    def updateDocument(self,dict):  ###TODO
         super().updateDocument(dict)
         print(dict)
 

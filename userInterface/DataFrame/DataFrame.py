@@ -45,7 +45,7 @@ class DataFrame(tk.Frame):
 
     def editButtonListener(self):
         selected=self.towarySheet.item(self.towarySheet.selection()[0])["values"]
-        ###################odczytaz z bazy element 
+            ###TODO
 
 
         self.itemEditFrame=DocEditFrame(self,"Edytowanie elementu:","""""""""""")
@@ -55,18 +55,19 @@ class DataFrame(tk.Frame):
 
     def delButtonListener(self):
         selected=self.towarySheet.item(self.towarySheet.selection()[0])["values"]
-        ###################odczytaz z bazy element 
+        ###TODO
 
-    def searchButtonListener(self):
+    def searchButtonListener(self):###TODO
          return
 
 
     def createNewDocument(self,dict):
         if dict==None:
-            return
+            return False
         if(not self.validateObligatoryKeys(dict)):
-            return
+            return False
         self.itemEditFrame.grid_forget()
+        return True
 
     def updateDocument(self,dict):
         if dict==None:

@@ -1,6 +1,7 @@
 from tkinter import ttk
 from userInterface.DataFrame.DataFrame import DataFrame
 from decimal import Decimal
+from models.Article import Article
 
 class TowaryFrame(DataFrame):
     def __init__(self,master,shopService):
@@ -15,12 +16,14 @@ class TowaryFrame(DataFrame):
         self.towarySheet.grid(row=2)
         self.towarySheet.insert("","end",values=("468844","testname",123,12.56))                   #test data
 
-        """towary=self.data.getData("towary")                                                  
-        for t in towary:
-            self.towarySheet.insert("","end",values=(t["nazwa"],t["kod"],t["cena"]))"""
+        self.fillSheet(self.shopService.findArticle())
         
+    def fillSheet(self,articles):
+        for a in articles:
+            self.towarySheet.insert("","end",values=(a.id,a.name,a.code,a.actualPrice))
+
     def getRecomendedKeys(self):
-        keys={"kod":0,"nazwa":"","cena":Decimal("0.00")}       #ustawic dobry kod
+        keys={"kod":0,"nazwa":"","cena":Decimal("0.00")}       ###TODO use GenerateKod
         return keys
 
     def validateObligatoryKeys(self,dict):
@@ -32,11 +35,14 @@ class TowaryFrame(DataFrame):
                 return False
         return True
 
-    def createNewDocument(self,dict):       #TODO
-        super().createNewDocument(dict)
-        print(dict)
+    def createNewDocument(self,dict):
+        if not super().createNewDocument(dict):
+            return False
+        article=Article(dict["kod"],dict["nazwa"],dict["cena"])
+        if(self.shopService.insertArticle(article)):
+            self.towarySheet.insert("","end",values=(article.id,article.name,article.code,article.actualPrice))
 
-    def updateDocument(self,dict):
+    def updateDocument(self,dict):       #TODO
         super().updateDocument(dict)
         print(dict)
 

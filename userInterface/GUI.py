@@ -66,15 +66,23 @@ class GUI(tk.Frame):
 
         towaryButton=tk.Button(self.menuFrame,text="Towary",command=self.showTowaryFrame)
         towaryButton.grid(row=1,column=0)
+        if(not self.user.isSeller)and (not self.user.isManager):
+            towaryButton["state"]="disabled"
 
         klienciButton=tk.Button(self.menuFrame,text="Klienci",command=self.showKlienciFrame)
         klienciButton.grid(row=1,column=1)
+        if(not self.user.isSeller):
+            klienciButton["state"]="disabled"
 
         rachunkiButton=tk.Button(self.menuFrame,text="Rachunki",command=self.showRachunkiFrame)
         rachunkiButton.grid(row=1,column=2)
+        if(not self.user.isSeller):
+            rachunkiButton["state"]="disabled"
 
         pracownicyButton=tk.Button(self.menuFrame,text="Pracownicy",command=self.showPracownicyFrame)
         pracownicyButton.grid(row=1,column=3)
+        if(not self.user.isOwner):
+            pracownicyButton["state"]="disabled"
 
 
     def showTowaryFrame(self):
@@ -85,6 +93,11 @@ class GUI(tk.Frame):
         self.towaryFrame=TowaryFrame(self,self.shopService)
         self.towaryFrame.pack(side="top")
         self.towaryFrame.backButton["command"]=self.showMenuFrame
+
+        if(not self.user.isManager):
+            self.towaryFrame.newButton["state"]="disabled"
+            self.towaryFrame.editButton["state"]="disabled"
+            self.towaryFrame.delButton["state"]="disabled"
 
 
     def showKlienciFrame(self):
