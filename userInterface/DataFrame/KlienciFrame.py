@@ -28,7 +28,7 @@ class KlienciFrame(DataFrame):
         
         
     def getRecomendedKeys(self):
-        keys={"imie":"","nazwisko":"","nrK":0,"nazwa":"","NIP":0,"tel":0,"adres":""}   #ustawic dobry nrK
+        keys={"imie":"","nazwisko":"","nrK":0,"nazwa":"","NIP":"","tel":"","adres":""}   #ustawic dobry nrK
         return keys
         
     def validateObligatoryKeys(self,dict):
@@ -47,8 +47,7 @@ class KlienciFrame(DataFrame):
                 dict[key]=None
         client=Client(dict["imie"],dict["nazwisko"],dict["nazwa"],dict["tel"],dict["NIP"],dict["adres"],dict["nrK"])
         if(self.shopService.insertClient(client)):
-            self.klienciSheet.insert("","end",values=(c.object_id,c.firstName,c.secondName,c.clientNr,c.name,c.vatId,c.telephone,c.address))
-        #sprawdzic dodawanie i wczytywanie
+            self.klienciSheet.insert("","end",values=(client.object_id,client.firstName,client.secondName,client.clientNr,client.name,client.vatId,client.telephone,client.address))
 
     def updateDocument(self,dict):  ###TODO
         super().updateDocument(dict)

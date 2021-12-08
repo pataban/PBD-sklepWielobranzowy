@@ -115,7 +115,7 @@ class GUI(tk.Frame):
         if(self.rachunkiFrame!=None):
             self.rachunkiFrame.pack(side="top")
             return
-        self.rachunkiFrame=RachunkiFrame(self,self.shopService)
+        self.rachunkiFrame=RachunkiFrame(self,self.shopService,self.user)
         self.rachunkiFrame.pack(side="top")
         self.rachunkiFrame.backButton["command"]=self.showMenuFrame
         
