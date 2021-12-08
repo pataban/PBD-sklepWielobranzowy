@@ -46,15 +46,9 @@ class ArticleRepository:
         })
         return update_result.matched_count == 1
 
-    def remove(self, existingArticle: Article) -> bool:
-        if existingArticle is None or not isinstance(existingArticle, Article):
-            raise TypeError('Invalid argument: existingArticle')
-        existing_article_dict = existingArticle.toMongoDictionary()
-        delete_result = self._articles_handler.delete_one(
-            existing_article_dict
-        )
+    def remove(self, article_id: str) -> bool:
+        delete_result = self._articles_handler.delete_one({
+            '_id': ObjectId(article_id)
+        })
         deleted_count = delete_result.deleted_count
-        if deleted_count < 1:
-            return False
-        existingArticle.id = None
-        return True
+        return deleted_count >= 1

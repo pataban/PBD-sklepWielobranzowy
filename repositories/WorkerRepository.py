@@ -49,18 +49,12 @@ class WorkerRepository:
         })
         return update_result.matched_count == 1
 
-    def remove(self, existingWorker: WorkerSafeDto) -> bool:
-        if existingWorker is None or not isinstance(existingWorker, WorkerSafeDto):
-            raise TypeError('Invalid argument: existingWorker')
-        existing_article_dict = existingWorker.toMongoDictionary()
-        delete_result = self._workers_handler.delete_one(
-            existing_article_dict
-        )
+    def remove(self, worker_id: str) -> bool:
+        delete_result = self._workers_handler.delete_one({
+            '_id': ObjectId(worker_id)
+        })
         deleted_count = delete_result.deleted_count
-        if deleted_count < 1:
-            return False
-        existingWorker.id = None
-        return True
+        return deleted_count >= 1
 
     def login(self, login: str, password: str) -> Optional[WorkerSafeDto]:
         if login is None or not isinstance(login, str):

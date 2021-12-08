@@ -83,19 +83,29 @@ class ShopService:  # future facade for all operations on shop database
     def updateClient(self, updatedClient: ClientOnlyDto) -> bool:
         pass
 
+    # aktualizuje dane rachunku
+    # wymaga rachunku w postaci dto - przedmioty na rachunku aktualizujemy inną metodą
+    # wymaga id_clienta dla wydajności (inaczej, trzeba by było pobierać całą listę klientów)
+    def updateBill(self, client_id, updatedBill: BillDto) -> bool:
+        pass
 
     # aktualizuje artykuł
     # tu łatwo: albo artykuł z listy, albo artykuł świeżo pobrany pojedynczo z bazy
     def updateArticle(self, updatedArticle: Article) -> bool:
         return self._articleRepository.update(updatedArticle)
 
-    def removeWorkerById(self):
+    # operacja usuwa pracownika
+    # usuwa pracownika wraz z wszystkimi rachunkami, które wystawił
+    def removeWorkerById(self, cascade: bool) -> bool:
         pass
 
-    def removeClientById(self):
-        pass
+    # usuwa klienta wraz z wszystkimi jego rachunkami
+    def removeClientById(self, client_id: str) -> bool:
+        return self._clientRepository.remove(client_id)
 
-    def removeArticleById(self):
+    # operacja usuwa artykuł
+    # usuwa artykuł wraz z wszystkimi rachunkami, na których się znajduje
+    def removeArticleById(self) -> bool:
         pass
 
     def generateNewKodTowaru(self):

@@ -49,3 +49,26 @@ class ClientRepository:
             return False
         newClient.object_id = str(inserted_id)
         return True
+
+    def remove(self, client_id: str) -> bool:
+        delete_result = self._clients_handler.delete_one({
+            '_id': ObjectId(client_id)
+        })
+        deleted_count = delete_result.deleted_count
+        return deleted_count >= 1
+
+    # def removeAllCreatedByWorker(self, workerNr: int):
+    #     for client_mongo_dict in self._clients_handler.find({
+    #         'bills': {
+    #             'workerNr': workerNr
+    #         }
+    #     }):
+    #         if 'bills' in client_mongo_dict:
+    #             for bill_mongo_dict in client_mongo_dict['bills'].copy():
+    #                 if bill_mongo_dict['workerNr'] == workerNr:
+    #                     client_mongo_dict['bills'].remove(bill_mongo_dict)
+    #             update_result = self._clients_handler.update_one({
+    #                 '_id': client_mongo_dict['_id']
+    #             }, {
+    #                 '$set': client_mongo_dict
+    #             })
