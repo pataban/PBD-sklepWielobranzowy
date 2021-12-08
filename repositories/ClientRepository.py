@@ -1,5 +1,6 @@
 from typing import Optional
 
+import pymongo
 from bson import ObjectId
 
 from models.ArticleInBill import ArticleInBill
@@ -111,6 +112,22 @@ class ClientRepository:
             '$set': client_mongo_dict
         })
         return update_result.matched_count == 1
+
+    def maxClientNr(self) -> int:
+        for result in self._clients_handler.find().sort('clientNr', pymongo.DESCENDING):
+            if 'clientNr' in result and result['clientNr'] is not None:
+                return result['clientNr']
+        return -1
+
+    def maxBillNr(self) -> int:
+        max_bill_nr = -1
+        for client_mongo_dict in self._clients_handler.find():
+            if 'bills' in client_mongo_dict:
+                for bill in client_mongo_dict['bills']:
+                    if 'billNr' in bill and bill['billNr'] is not None:
+                        if bill['billNr'] > max_bill_nr:
+                            max_bill_nr = bill['billNr']
+        return max_bill_nr
 
     # def removeAllCreatedByWorker(self, workerNr: int):
     #     for client_mongo_dict in self._clients_handler.find({

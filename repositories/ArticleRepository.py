@@ -1,5 +1,6 @@
 from typing import Optional
 
+import pymongo
 from bson import ObjectId
 
 from models.Article import Article
@@ -58,3 +59,9 @@ class ArticleRepository:
         })
         deleted_count = delete_result.deleted_count
         return deleted_count >= 1
+
+    def maxArticleCode(self) -> int:
+        for result in self._articles_handler.find().sort('code', pymongo.DESCENDING):
+            if 'code' in result and result['code'] is not None:
+                return result['code']
+        return -1

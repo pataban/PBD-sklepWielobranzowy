@@ -1,5 +1,6 @@
 from typing import Optional
 
+import pymongo
 from bson import ObjectId
 
 from models.Worker import Worker
@@ -73,3 +74,9 @@ class WorkerRepository:
         if worker_mongo_dict is None:
             return None
         return WorkerSafeDto(worker_mongo_dict)
+
+    def maxWorkerNr(self) -> int:
+        for result in self._workers_handler.find().sort('workerNr', pymongo.DESCENDING):
+            if 'workerNr' in result and result['workerNr'] is not None:
+                return result['workerNr']
+        return -1

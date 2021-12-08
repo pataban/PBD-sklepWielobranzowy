@@ -28,10 +28,10 @@ class ShopService:  # future facade for all operations on shop database
         self.__fetchActualNumbers()
 
     def __fetchActualNumbers(self):
-        self._articleCode = 0
-        self._clientNr = 0
-        self._workerNr = 0
-        self._billNr = 0
+        self._articleCode = self._articleRepository.maxArticleCode()
+        self._clientNr = self._clientRepository.maxClientNr()
+        self._workerNr = self._workerRepository.maxWorkerNr()
+        self._billNr = self._clientRepository.maxBillNr()
 
 
     # zwraca wszystkich pracowników BEZ loginów i haseł
@@ -149,16 +149,20 @@ class ShopService:  # future facade for all operations on shop database
         pass
 
     def generateNewKodTowaru(self):
-        pass
+        self._articleCode += 1
+        return self._articleCode
 
     def generateNewNrK(self):
-        pass
+        self._clientNr += 1
+        return self._clientNr
 
     def generateNewNrP(self):
-        pass
+        self._workerNr += 1
+        return self._workerNr
 
     def generateNewNrR(self):
-        pass
+        self._billNr += 1
+        return self._billNr
 
     # imitacja logowania
     # jeśli logowanie niepoprawne, zwraca None
@@ -249,4 +253,3 @@ class ShopService:  # future facade for all operations on shop database
                 }
             self.klienci.insert_one(kli)
 
-    # there will be many, many operations available...
