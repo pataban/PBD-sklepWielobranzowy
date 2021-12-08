@@ -20,6 +20,18 @@ class ClientRepository:
             client_only_dtos.append(ClientOnlyDto(client_mongo_dict))
         return client_only_dtos
 
+    def findClientOnlyDtoByClientNr(self, clientNr: int) -> Optional[ClientOnlyDto]:
+        client_mongo_dict = self._clients_handler.find_one({'clientNr': clientNr})
+        if client_mongo_dict is None:
+            return None
+        return ClientOnlyDto(client_mongo_dict)
+
+    def findClientOnlyDtoByVatId(self, vatId: str) -> Optional[ClientOnlyDto]:
+        client_mongo_dict = self._clients_handler.find_one({'vatId': vatId})
+        if client_mongo_dict is None:
+            return None
+        return ClientOnlyDto(client_mongo_dict)
+
     def findByIdClientWithBillsNumbersOnlyDto(
             self, client_id) -> Optional[ClientWithBillsNumbersOnlyDto]:  # jeden klient tylko z listą numerów rachunków
         client_mongo_dict = self._clients_handler.find_one({'_id': ObjectId(client_id)})

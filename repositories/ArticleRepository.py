@@ -21,6 +21,12 @@ class ArticleRepository:
             return None
         return Article.fromMongoDictionary(article_mongo_dict)
 
+    def findByCode(self, code: int) -> Optional[Article]:
+        article_mongo_dict = self._articles_handler.find_one({'code': code})
+        if article_mongo_dict is None:
+            return None
+        return Article.fromMongoDictionary(article_mongo_dict)
+
     def insert(self, newArticle: Article) -> bool:
         if newArticle is None:
             raise TypeError('Argument newArticle cannot be None')

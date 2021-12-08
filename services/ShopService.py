@@ -17,6 +17,7 @@ from userInterface.DataFrame.RachunkiFrame import getTime
 
 
 class ShopService:  # future facade for all operations on shop database
+
     def __init__(self,
                  articleRepository: ArticleRepository,
                  workerRepository: WorkerRepository,
@@ -24,6 +25,14 @@ class ShopService:  # future facade for all operations on shop database
         self._articleRepository = articleRepository
         self._workerRepository = workerRepository
         self._clientRepository = clientRepository
+        self.__fetchActualNumbers()
+
+    def __fetchActualNumbers(self):
+        self._articleCode = 0
+        self._clientNr = 0
+        self._workerNr = 0
+        self._billNr = 0
+
 
     # zwraca wszystkich pracowników BEZ loginów i haseł
     def findWorkers(self) -> [WorkerSafeDto]:
@@ -38,6 +47,18 @@ class ShopService:  # future facade for all operations on shop database
     def findClients(self) -> [ClientOnlyDto]:
         return self._clientRepository.findClientOnlyDto()
 
+    # zwraca None jeśli nie znajdzie
+    # zwraca klienta bez rachunków jeśli znajdzie
+    # alternatywna nazwa: findClientByNrK
+    def findClientByClientNr(self, clientNr: int) -> Optional[ClientOnlyDto]:
+        return self._clientRepository.findClientOnlyDtoByClientNr(clientNr)
+
+    # zwraca None jeśli nie znajdzie
+    # zwraca klienta bez rachunków jeśli znajdzie
+    # alternatywna nazwa: findClientByNip
+    def findClientByVatId(self, vatId: str) -> Optional[ClientOnlyDto]:
+        return self._clientRepository.findClientOnlyDtoByVatId(vatId)
+
     # jeśli nie znajdzie clienta, zwraca None
     # jeśli znajdzie, zwraca klient w postaci klienta tylko z listą NUMERÓW rachunków
     def findClientById(self, client_id: str) -> Optional[ClientWithBillsNumbersOnlyDto]:
@@ -51,6 +72,12 @@ class ShopService:  # future facade for all operations on shop database
     # jeśli znajdzie, zwraca po prostu artykuł :)
     def findArticleById(self, article_id: str) -> Optional[Article]:
         return self._articleRepository.findById(article_id)
+
+    # jeśli nie znajdzie artykułu, zwraca None
+    # jeśli znajdzie, zwraca po prostu artykuł
+    # z reguły pewnie wolniejsze niż po Id, bo pewnie mongo indeksuje tylko po id
+    def findArticleByCode(self, article_code: int) -> Optional[Article]:
+        return self._articleRepository.findByCode(article_code)
 
     # wszystkie rachunki w postaci rachunku bez listy produktów, z dodatkowym id klienta
     def findBills(self) -> [BillDto]:
