@@ -54,6 +54,13 @@ class WorkerORM(BazaModel):
     isOwner=sqla.Column(sqla.Boolean,default=False)
     bills=sqla.orm.relationship('BillORM')#backref='workers' back_populates='worker'
     
+    def update(self,updatedWorker):#przyjmuje WorkerORM
+        self.id=updatedWorker.id
+        self.code=updatedWorker.code
+        self.name=updatedWorker.name
+        self.price=updatedWorker.price
+        self.positions=updatedWorker.positions
+
     def __str__(self) -> str:
         return str(vars(self))
         
