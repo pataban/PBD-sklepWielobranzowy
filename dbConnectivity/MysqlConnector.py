@@ -45,23 +45,25 @@ class ArticleORM(BazaModel):
 
 class WorkerORM(BazaModel):
     __tablename__ = 'workers'
-    id = sqla.Column(sqla.Integer, primary_key=True)
-    workerNr = sqla.Column(sqla.Integer, nullable=False)
-    firstName = sqla.Column(sqla.String(30), nullable=False)
-    secondName = sqla.Column(sqla.String(30), nullable=False)
-    login = sqla.Column(sqla.String(30), nullable=False)
-    password = sqla.Column(sqla.String(30), nullable=False)
-    isSeller = sqla.Column(sqla.Boolean, default=False)
-    isManager = sqla.Column(sqla.Boolean, default=False)
-    isOwner = sqla.Column(sqla.Boolean, default=False)
-    bills = sqla.orm.relationship('BillORM')  # backref='workers' back_populates='worker'
-
-    def update(self, updatedWorker):  # przyjmuje WorkerORM
-        self.id = updatedWorker.id
-        self.code = updatedWorker.code
-        self.name = updatedWorker.name
-        self.price = updatedWorker.price
-        self.positions = updatedWorker.positions
+    id=sqla.Column(sqla.Integer,primary_key=True)
+    workerNr=sqla.Column(sqla.Integer,nullable=False)
+    firstName=sqla.Column(sqla.String(30),nullable=False)
+    secondName=sqla.Column(sqla.String(30),nullable=False)
+    login=sqla.Column(sqla.String(30),nullable=False)
+    password=sqla.Column(sqla.String(30),nullable=False)
+    isSeller=sqla.Column(sqla.Boolean,default=False)
+    isManager=sqla.Column(sqla.Boolean,default=False)
+    isOwner=sqla.Column(sqla.Boolean,default=False)
+    bills=sqla.orm.relationship('BillORM')#backref='workers' back_populates='worker'
+    
+    def update(self,updatedWorker):#przyjmuje WorkerORM
+        self.id=updatedWorker.id
+        self.workerNr=updatedWorker.workerNr
+        self.firstName=updatedWorker.firstName
+        self.secondName=updatedWorker.secondName
+        self.isSeller=updatedWorker.isSeller
+        self.isManager=updatedWorker.isManager
+        self.isOwner=updatedWorker.isOwner
 
     def __str__(self) -> str:
         return str(vars(self))
