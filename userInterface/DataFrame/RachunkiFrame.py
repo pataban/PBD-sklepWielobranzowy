@@ -33,7 +33,7 @@ class RachunkiFrame(DataFrame):
 
     def fillSheet(self,bills):
         for b in bills:
-            self.rachunkiSheet.insert("","end",values=(b.client_id,b.billNr,b.dateTime,b.workerNr,b.paymentMethod,b.isAlreadyPaid))
+            self.rachunkiSheet.insert("","end", values=(b.client_id, b.billNr, b.dateTime, b.worker_id, b.paymentMethod, b.isAlreadyPaid))
         
 
     def getRecomendedKeys(self):

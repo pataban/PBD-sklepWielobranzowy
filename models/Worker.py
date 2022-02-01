@@ -16,7 +16,7 @@ class Worker:
                  object_id=None):  # object_id can be None if you want to insert new Worker
                                    # object_id should be actually filled otherwise
         if workerNr is None or not isinstance(workerNr, int):
-            raise TypeError('Invalid argument: workerNr')
+            raise TypeError('Invalid argument: worker_id')
         if firstName is None or not isinstance(firstName, str):
             raise TypeError('Invalid argument: firstName')
         if secondName is None or not isinstance(secondName, str):
@@ -54,7 +54,7 @@ class Worker:
     @classmethod
     def fromMongoDictionary(cls, worker_mongo_dict):
         return cls(
-            worker_mongo_dict["workerNr"],
+            worker_mongo_dict["worker_id"],
             worker_mongo_dict["firstName"],
             worker_mongo_dict["secondName"],
             worker_mongo_dict["login"],

@@ -29,7 +29,7 @@ class ShopService:  # future facade for all operations on shop database
 
     def __fetchActualNumbers(self):
         self._articleCode = self._articleRepository.maxArticleCode()
-        #self._clientNr = self._clientRepository.maxClientNr()
+        self._clientNr = self._clientRepository.maxClientNr()
         #self._workerNr = self._workerRepository.maxWorkerNr()
         #self._billNr = self._clientRepository.maxBillNr()
 
@@ -168,7 +168,7 @@ class ShopService:  # future facade for all operations on shop database
     # jeśli logowanie niepoprawne, zwraca None
     # jeśli logowanie poprawne zwraca pracownika w postaci okrojonej o dane do logowania
     def login(self, login, password) -> Optional[WorkerSafeDto]:    #TODO
-        return WorkerSafeDto({"workerNr":111,"firstName":"aaa","secondName":"aaa","isSeller":True,"isManager":True,"isOwner":True,"_id":111})
+        return WorkerSafeDto({"worker_id":111,"firstName":"aaa","secondName":"aaa","isSeller":True,"isManager":True,"isOwner":True,"_id":111})
         #return self._workerRepository.login(login, password)
 
     def chkTestUser(self):  # uzytkownik testowy
@@ -193,7 +193,7 @@ class ShopService:  # future facade for all operations on shop database
     def delAll(self):
         self._articleRepository._articles_handler.delete_many({})
         self._workerRepository._workers_handler.delete_many({})
-        self._clientRepository._clients_handler.delete_many({})
+        self._clientRepository._mysql_handler.delete_many({})
 
     def getData(self, collection, atribute=None, value=None):  # old
         if (atribute == None and value == None):

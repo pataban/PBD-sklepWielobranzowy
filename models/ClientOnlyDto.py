@@ -1,16 +1,18 @@
 from bson import ObjectId
 
+from dbConnectivity.MysqlConnector import *
+
 
 class ClientOnlyDto:
-    def __init__(self, clientMongoDict):
-        self.firstName = clientMongoDict.get('firstName')
-        self.secondName = clientMongoDict.get('secondName')
-        self.name = clientMongoDict.get('name')
-        self.telephone = clientMongoDict.get('telephone')
-        self.vatId = clientMongoDict.get('vatId')
-        self.address = clientMongoDict.get('address')
-        self.clientNr = clientMongoDict.get('clientNr')
-        self.object_id = clientMongoDict.get('_id')
+    def __init__(self, client_orm: ClientORM):
+        self.firstName = client_orm.firstName
+        self.secondName = client_orm.secondName
+        self.name = client_orm.name
+        self.telephone = client_orm.telephone
+        self.vatId = client_orm.vatId
+        self.address = client_orm.address
+        self.clientNr = client_orm.clientNr
+        self.object_id = client_orm.id
 
     def __str__(self) -> str:
         return 'ClientOnlyDto {' + \
@@ -40,4 +42,3 @@ class ClientOnlyDto:
 
     def toORM(self):
         pass
-

@@ -1,33 +1,31 @@
+from dbConnectivity.MysqlConnector import BillORM
 from models.PaymentMethod import PaymentMethod
 
 
 class BillDto:
-    def __init__(self, bill_mongo_dict, client_id):
-        self.billNr = bill_mongo_dict.get('billNr')
-        self.workerNr = bill_mongo_dict.get('workerNr')
-        if bill_mongo_dict.get('paymentMethod') == 'CASH':
+    def __init__(self, bill_orm: BillORM):
+
+        self.billNr = bill_orm.billNr
+        self.worker_id = bill_orm.worker_id
+        if bill_orm.paymentMethod == 'CASH':
             self.paymentMethod = PaymentMethod.CASH
-        elif bill_mongo_dict.get('paymentMethod') == 'BANK_TRANSFER':
+        elif bill_orm.paymentMethod == 'BANK_TRANSFER':
             self.paymentMethod = PaymentMethod.BANK_TRANSFER
         else:
             self.paymentMethod = None
-        # self.articlesIds = []
-        # if 'articlesInBill' in bill_mongo_dict:
-        #     for articleInBill in bill_mongo_dict.get('articlesInBill'):
-        #         self.articlesIds.append(str(articleInBill.get('article_id')))
-        self.isAlreadyPaid = bill_mongo_dict.get('isAlreadyPaid')
-        self.dateTime = bill_mongo_dict.get('dateTime')
-        self.client_id = str(client_id)
+        self.isAlreadyPaid = bill_orm.isAlreadyPaid
+        self.dateTime = bill_orm.dateTime
+        self.client_id = bill_orm.client_id
 
     def __str__(self) -> str:
         return 'BillDto {' + \
-            'billNr: ' + str(self.billNr) + \
-            ', workerNr: ' + str(self.workerNr) + \
-            ', paymentMethod: ' + str(self.paymentMethod) + \
-            ', isAlreadyPaid: ' + str(self.isAlreadyPaid) + \
-            ', dateTime: ' + str(self.dateTime) + \
-            ', client_id: ' + str(self.client_id) + \
-            '}'
+               'billNr: ' + str(self.billNr) + \
+               ', worker_id: ' + str(self.worker_id) + \
+               ', paymentMethod: ' + str(self.paymentMethod) + \
+               ', isAlreadyPaid: ' + str(self.isAlreadyPaid) + \
+               ', dateTime: ' + str(self.dateTime) + \
+               ', client_id: ' + str(self.client_id) + \
+               '}'
 
     @classmethod
     def fromORM(cls, bill_orm):
@@ -35,4 +33,3 @@ class BillDto:
 
     def toORM(self):
         pass
-

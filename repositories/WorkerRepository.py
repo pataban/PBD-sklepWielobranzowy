@@ -76,7 +76,7 @@ class WorkerRepository:
         return WorkerSafeDto(worker_mongo_dict)
 
     def maxWorkerNr(self) -> int:
-        for result in self._workers_handler.find().sort('workerNr', pymongo.DESCENDING):
-            if 'workerNr' in result and result['workerNr'] is not None:
-                return result['workerNr']
+        for result in self._workers_handler.find().sort('worker_id', pymongo.DESCENDING):
+            if 'worker_id' in result and result['worker_id'] is not None:
+                return result['worker_id']
         return -1

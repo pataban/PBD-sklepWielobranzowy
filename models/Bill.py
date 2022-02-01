@@ -40,7 +40,7 @@ class Bill:
     def toMongoDictionary(self):
         bill_dict = vars(self).copy()
         if 'worker' in bill_dict:
-            bill_dict['workerNr'] = self.worker.nrP
+            bill_dict['worker_id'] = self.worker.nrP
             bill_dict.pop('worker')
         if 'articlesInBill' in bill_dict and len(self.articlesInBill) > 0:
             bill_dict.pop('articlesInBill')
