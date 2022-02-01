@@ -35,8 +35,6 @@ class RachunkiFrame(DataFrame):
 
     def fillSheet(self,bills):
         for b in bills:
-            print("PaymentMethod:", PaymentMethod, end=" ")
-            print()
             metoda_platnosci_slownie = "Brak danych"
             if b.paymentMethod == PaymentMethod.CASH:
                 metoda_platnosci_slownie = "gotówka"

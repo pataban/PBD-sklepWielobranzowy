@@ -29,7 +29,7 @@ class ClientRepository:
 
     def findClientOnlyDtoByClientNr(self, clientNr: int) -> Optional[ClientOnlyDto]:
         session = sqla.orm.sessionmaker(self._mysql_handler)()
-        client_orm = session.query(ArticleORM).filter_by(clientNr=clientNr).one()
+        client_orm = session.query(ClientORM).filter_by(clientNr=clientNr).one()
         session.close()
         if client_orm is None:
             return None
@@ -37,7 +37,7 @@ class ClientRepository:
 
     def findClientOnlyDtoByVatId(self, vatId: str) -> Optional[ClientOnlyDto]:
         session = sqla.orm.sessionmaker(self._mysql_handler)()
-        client_orm = session.query(ArticleORM).filter_by(vatId=vatId).one()
+        client_orm = session.query(ClientORM).filter_by(vatId=vatId).one()
         session.close()
         if client_orm is None:
             return None
@@ -46,7 +46,7 @@ class ClientRepository:
     def findByIdClientWithBillsNumbersOnlyDto(
             self, client_id) -> Optional[ClientWithBillsNumbersOnlyDto]:  # jeden klient tylko z listą numerów rachunków
         session = sqla.orm.sessionmaker(self._mysql_handler)()
-        client_orm = session.query(ArticleORM).filter_by(id=client_id).one()
+        client_orm = session.query(ClientORM).filter_by(id=client_id).one()
         session.close()
         if client_orm is None:
             return None
@@ -82,8 +82,12 @@ class ClientRepository:
         return True
 
     def update(self, updatedClient: ClientOnlyDto) -> bool:
-
-        pass
+        session = sqla.orm.sessionmaker(self._mysql_handler)()
+        clientOrm = session.query(ClientORM).filter_by(clientNr=updatedClient.clientNr).one()
+        clientOrm.updateByDto(updatedClient)
+        session.commit()
+        session.close()
+        return True
 
     def remove(self, client_id: str) -> bool:
 

@@ -1,5 +1,7 @@
 from pymongo import MongoClient
 import sqlalchemy as sqla
+
+from models.ClientOnlyDto import ClientOnlyDto
 from models.PaymentMethod import PaymentMethod
 # from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -103,6 +105,17 @@ class ClientORM(BazaModel):
             self.bills.append(billOrm)
         else:
             self.bills = [billOrm]
+
+    def updateByDto(self, clientOnlyDto):
+        self.firstName = clientOnlyDto.firstName
+        self.secondName = clientOnlyDto.secondName
+        self.name = clientOnlyDto.name
+        self.telephone = clientOnlyDto.telephone
+        self.vatId = clientOnlyDto.vatId
+        self.address = clientOnlyDto.address
+        self.clientNr = clientOnlyDto.clientNr
+        self.id = clientOnlyDto.object_id
+
 
     def __str__(self) -> str:
         return str(vars(self))
