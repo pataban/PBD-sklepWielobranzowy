@@ -1,4 +1,5 @@
 from bson import ObjectId
+from dbConnectivity.MysqlConnector import *
 
 
 class WorkerSafeDto:
@@ -21,8 +22,20 @@ class WorkerSafeDto:
 
     @classmethod
     def fromORM(cls, worker_orm):
-        pass
+        return cls({
+            "workerNr":worker_orm.workerNr,
+            "firstName":worker_orm.firstName,
+            "secondName":worker_orm.secondName,
+            "isSeller":worker_orm.isSeller,
+            "isManager":worker_orm.isManager,
+            "isOwner":worker_orm.isOwner,
+            "_id":worker_orm.id
+        })
 
     def toORM(self):
-        pass
+        return WorkerORM(id=self.id,workerNr=self.nrP,
+                firstName=self.firstName,secondName=self.secondName,
+                login=None,password=None,
+                isSeller=self.isSeller,isManager=self.isManager,
+                isOwner=self.isOwner)
 

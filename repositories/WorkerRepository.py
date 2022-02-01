@@ -2,9 +2,11 @@ from typing import Optional
 
 import pymongo
 from bson import ObjectId
+import sqlalchemy as sqla
 
 from models.Worker import Worker
 from models.WorkerSafeDto import WorkerSafeDto
+from dbConnectivity.MysqlConnector import *
 
 from resources.static.constants import *
 
@@ -14,16 +16,22 @@ class WorkerRepository:
         self._workers_handler = workersMongoHandler
 
     def find(self) -> [WorkerSafeDto]:
+        session=sqla.orm.sessionmaker(bind=self._workers_handler)()
         worker_objects = []
-        for worker_mongo_dict in self._workers_handler.find():
-            worker_objects.append(WorkerSafeDto(worker_mongo_dict))
+        for worker_orm in session.query(WorkerORM).all():
+            worker_objects.append(WorkerSafeDto.fromORM(worker_orm))
+        session.close()
         return worker_objects
 
     def findById(self, worker_id) -> Optional[WorkerSafeDto]:
-        worker_mongo_dict = self._workers_handler.find_one({'_id': ObjectId(worker_id)})
-        if worker_mongo_dict is None:
-            return None
-        return WorkerSafeDto(worker_mongo_dict)
+        session=sqla.orm.sessionmaker(bind=self._workers_handler)()
+        worker_result=session.query(WorkerORM).filter_by(id=worker_id)
+        worker=None
+        if(worker_result.count()==1):
+            worker_orm = worker_result.one()
+            worker=WorkerSafeDto.fromORM(worker_orm)
+        session.close()
+        return worker
 
     def insert(self, newWorker: Worker) -> bool:
         if newWorker is None:
@@ -32,30 +40,42 @@ class WorkerRepository:
             raise TypeError('Argument newWorker must be of type Worker')
         if newWorker.id is not None:
             raise ValueError('New worker cannot have assigned id')
-        insert_one_result = self._workers_handler.insert_one(newWorker.toMongoDictionary())
-        inserted_id = insert_one_result.inserted_id
+        session=sqla.orm.sessionmaker(bind=self._workers_handler)()
+        workerORM=newWorker.toORM()
+        session.add(workerORM)
+        session.commit()
+        inserted_id = workerORM.id
+        session.close()
         if inserted_id is None:
             return False
-        newWorker.id = str(inserted_id)  # inserting new worker will automatically fill id field by new _id in db
+        newWorker.id = inserted_id  # inserting new worker will automatically fill id field by new _id in db
         return True
 
     def update(self, updatedWorker: WorkerSafeDto) -> bool:
         if updatedWorker is None or not isinstance(updatedWorker, WorkerSafeDto):
             raise TypeError('Invalid argument: updatedWorker')
-        updated_worker_dict = updatedWorker.toMongoDictionary()
-        update_result = self._workers_handler.update_one({
-            '_id': updated_worker_dict['_id']
-        }, {
-            '$set': updated_worker_dict
-        })
-        return update_result.matched_count == 1
+        session=sqla.orm.sessionmaker(bind=self._workers_handler)()
+        updated_worker_orm = updatedWorker.toORM()
+        select_result= session.query(WorkerORM).filter_by(id=updated_worker_orm.id)
+        if(select_result.count()==1):
+            worker_orm =select_result.one()
+            worker_orm.update(updated_worker_orm)
+            select_result=True
+        else:
+            select_result=False
+        session.commit()
+        session.close()
+        return select_result
 
     def remove(self, worker_id: str) -> bool:
-        delete_result = self._workers_handler.delete_one({
-            '_id': ObjectId(worker_id)
-        })
-        deleted_count = delete_result.deleted_count
-        return deleted_count >= 1
+        session=sqla.orm.sessionmaker(bind=self._workers_handler)()
+        select_result = session.query(WorkerORM).filter_by(id=worker_id)
+        delete_count = select_result.count()
+        if(delete_count>0):
+            session.delete(select_result.all())
+        session.commit()
+        session.close()
+        return delete_count >= 1
 
     def login(self, login: str, password: str) -> Optional[WorkerSafeDto]:
         if login is None or not isinstance(login, str):
@@ -67,16 +87,20 @@ class WorkerRepository:
         if len(password) < MIN_PASSWORD_LEN:
             raise ValueError('Argument password is too short')
 
-        worker_mongo_dict = self._workers_handler.find_one({
-            'login': login,
-            'password': password
-        })
-        if worker_mongo_dict is None:
-            return None
-        return WorkerSafeDto(worker_mongo_dict)
+        session=sqla.orm.sessionmaker(bind=self._workers_handler)()
+        select_result = session.query(WorkerORM).filter_by(login=login).filter_by(password=password)
+        worker=None
+        if(select_result.count()>0):
+            worker_orm=select_result.all()[0]
+            worker=WorkerSafeDto.fromORM(worker_orm)
+        session.close()
+        return worker
 
     def maxWorkerNr(self) -> int:
-        for result in self._workers_handler.find().sort('workerNr', pymongo.DESCENDING):
-            if 'workerNr' in result and result['workerNr'] is not None:
-                return result['workerNr']
+        session=sqla.orm.sessionmaker(bind=self._workers_handler)()
+        for result in session.query(WorkerORM).order_by(WorkerORM.workerNr.desc()).all():
+            if result.workerNr is not None:
+                session.close()
+                return result.workerNr
+        session.close()
         return -1

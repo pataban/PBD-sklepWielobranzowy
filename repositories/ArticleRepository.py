@@ -21,19 +21,23 @@ class ArticleRepository:
 
     def findById(self, article_id) -> Optional[Article]:
         session=sqla.orm.sessionmaker(bind=self._articles_handler)()
-        article_orm = session.query(ArticleORM).filter_by(id=article_id).one()
+        article_result=session.query(ArticleORM).filter_by(id=article_id)
+        article=None
+        if(article_result.count()==1):
+            article_orm = article_result.one()
+            article=Article.fromORM(article_orm)
         session.close()
-        if article_orm is None:
-            return None
-        return Article.fromORM(article_orm)
+        return article
 
     def findByCode(self, code: int) -> Optional[Article]:
         session=sqla.orm.sessionmaker(bind=self._articles_handler)()
-        article_orm = session.query(ArticleORM).filter_by(code=code).one()
+        article_result=session.query(ArticleORM).filter_by(code=code)
+        article=None
+        if(article_result.count()==1):
+            article_orm = article_result.one()
+            article=Article.fromORM(article_orm)
         session.close()
-        if article_orm is None:
-            return None
-        return Article.fromORM(article_orm)
+        return article
 
     def insert(self, newArticle: Article) -> bool:
         if newArticle is None:
@@ -43,12 +47,11 @@ class ArticleRepository:
         if newArticle.id is not None:
             raise ValueError('New article cannot have assigned id')
         session=sqla.orm.sessionmaker(bind=self._articles_handler)()
-        articleOrm=newArticle.toORM()
-        session.add(articleOrm)
+        articleORM=newArticle.toORM()
+        session.add(articleORM)
         session.commit()
-        inserted_id = articleOrm.id
+        inserted_id = articleORM.id
         session.close()
-        print(inserted_id)
         if inserted_id is None:
             return False
         newArticle.id = inserted_id  # inserting new article will automatically fill id field by new _id in db
@@ -59,21 +62,23 @@ class ArticleRepository:
             raise TypeError('Invalid argument: updatedArticle')
         session=sqla.orm.sessionmaker(bind=self._articles_handler)()
         updated_article_orm = updatedArticle.toORM()
-        article_orm = session.query(ArticleORM).filter_by(id=updated_article_orm.id)
-        update_result=article_orm.count()
-        if(update_result==1):
-            article_orm=article_orm.one()
+        select_result=session.query(ArticleORM).filter_by(id=updated_article_orm.id)
+        if(select_result.count()==1):
+            article_orm = select_result.one()
             article_orm.update(updated_article_orm)
+            select_result=True
+        else:
+            select_result=False
         session.commit()
         session.close()
-        return update_result == 1
+        return select_result
 
     def remove(self, article_id: str) -> bool:
         session=sqla.orm.sessionmaker(bind=self._articles_handler)()
-        delete_result = session.query(ArticleORM).filter_by(id=article_id)
-        delete_count = delete_result.count()
+        select_result = session.query(ArticleORM).filter_by(id=article_id)
+        delete_count = select_result.count()
         if(delete_count>0):
-            session.delete(delete_result.all())
+            session.delete(select_result.all())
         session.commit()
         session.close()
         return delete_count >= 1

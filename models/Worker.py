@@ -1,6 +1,7 @@
 from bson import ObjectId
 
 from resources.static.constants import *
+from dbConnectivity.MysqlConnector import *
 
 
 class Worker:
@@ -35,7 +36,7 @@ class Worker:
             raise TypeError('Invalid argument: isManager')
         if not isinstance(isOwner, bool):
             raise TypeError('Invalid argument: isOwner')
-        if object_id is not None and not isinstance(object_id, str):
+        if object_id is not None and not isinstance(object_id, int):
             raise TypeError('Invalid argument: object_id')
 
         self.workerNr = workerNr
@@ -74,8 +75,17 @@ class Worker:
 
     @classmethod
     def fromORM(cls, worker_orm):
-        pass
+        return cls(
+            worker_orm.workerNr,worker_orm.firstName,worker_orm.secondName,
+                worker_orm.login,worker_orm.password,
+                isSeller=worker_orm.isSeller,isManager=worker_orm.isManager,
+                isOwner=worker_orm.isOwner,object_id=worker_orm.id
+        )
 
     def toORM(self):
-        pass
+        return WorkerORM(id=self.id,workerNr=self.workerNr,
+                firstName=self.firstName,secondName=self.secondName,
+                login=self.login,password=self.password,
+                isSeller=self.isSeller,isManager=self.isManager,
+                isOwner=self.isOwner)
 

@@ -56,10 +56,12 @@ class WorkerORM(BazaModel):
     
     def update(self,updatedWorker):#przyjmuje WorkerORM
         self.id=updatedWorker.id
-        self.code=updatedWorker.code
-        self.name=updatedWorker.name
-        self.price=updatedWorker.price
-        self.positions=updatedWorker.positions
+        self.workerNr=updatedWorker.workerNr
+        self.firstName=updatedWorker.firstName
+        self.secondName=updatedWorker.secondName
+        self.isSeller=updatedWorker.isSeller
+        self.isManager=updatedWorker.isManager
+        self.isOwner=updatedWorker.isOwner
 
     def __str__(self) -> str:
         return str(vars(self))
