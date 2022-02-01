@@ -16,10 +16,12 @@ if __name__ == "__main__":
 
 
     # uzytkownik testowy
+    worker=None
     session=sqla.orm.sessionmaker(bind=mysqlConnector.workersHandler)()
     if not session.query(WorkerORM).filter_by(login='aaa').count():
-        session.add(WorkerORM(workerNr=111, firstName="aaa", secondName="aaa", 
-                login="aaa", password="aaa", isSeller=True, isManager=True, isOwner=True))
+        worker=WorkerORM(workerNr=111, firstName="aaa", secondName="aaa", 
+                login="aaa", password="aaa", isSeller=True, isManager=True, isOwner=True)
+        session.add(worker)
 
     print("towary:")
     tow = session.query(ArticleORM).all()

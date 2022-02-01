@@ -45,12 +45,13 @@ class ArticleRepository:
         session=sqla.orm.sessionmaker(bind=self._articles_handler)()
         articleOrm=newArticle.toORM()
         session.add(articleOrm)
-        inserted_id = articleOrm.inserted_id
         session.commit()
+        inserted_id = articleOrm.id
         session.close()
+        print(inserted_id)
         if inserted_id is None:
             return False
-        newArticle.id = str(inserted_id)  # inserting new article will automatically fill id field by new _id in db
+        newArticle.id = inserted_id  # inserting new article will automatically fill id field by new _id in db
         return True
 
     def update(self, updatedArticle: Article) -> bool:
@@ -65,7 +66,7 @@ class ArticleRepository:
             article_orm.update(updated_article_orm)
         session.commit()
         session.close()
-        return update_result.matched_count == 1
+        return update_result == 1
 
     def remove(self, article_id: str) -> bool:
         session=sqla.orm.sessionmaker(bind=self._articles_handler)()
@@ -82,6 +83,6 @@ class ArticleRepository:
         for result in  session.query(ArticleORM).order_by(ArticleORM.code.desc()).all(): 
             if result.code is not None:
                 session.close()
-                return result['code']
+                return result.code
         session.close()
         return -1
