@@ -14,22 +14,26 @@ class ArticleRepository:
     def find(self) -> [Article]:
         session=sqla.orm.sessionmaker(bind=self._articles_handler)()
         article_objects = []
-        for article_orm in session.query(WorkerORM).all():
+        for article_orm in session.query(ArticleORM).all():
             article_objects.append(Article.fromORM(article_orm))
         session.close()
         return article_objects
 
     def findById(self, article_id) -> Optional[Article]:
-        article_mongo_dict = self._articles_handler.find_one({'_id': ObjectId(article_id)})
-        if article_mongo_dict is None:
+        session=sqla.orm.sessionmaker(bind=self._articles_handler)()
+        article_orm = session.query(ArticleORM).filter_by(id=article_id).one()
+        session.close()
+        if article_orm is None:
             return None
-        return Article.fromMongoDictionary(article_mongo_dict)
+        return Article.fromORM(article_orm)
 
     def findByCode(self, code: int) -> Optional[Article]:
-        article_mongo_dict = self._articles_handler.find_one({'code': code})
-        if article_mongo_dict is None:
+        session=sqla.orm.sessionmaker(bind=self._articles_handler)()
+        article_orm = session.query(ArticleORM).filter_by(code=code).one()
+        session.close()
+        if article_orm is None:
             return None
-        return Article.fromMongoDictionary(article_mongo_dict)
+        return Article.fromORM(article_orm)
 
     def insert(self, newArticle: Article) -> bool:
         if newArticle is None:
@@ -38,8 +42,12 @@ class ArticleRepository:
             raise TypeError('Argument newArticle must be of type Article')
         if newArticle.id is not None:
             raise ValueError('New article cannot have assigned id')
-        insert_one_result = self._articles_handler.insert_one(newArticle.toMongoDictionary())
-        inserted_id = insert_one_result.inserted_id
+        session=sqla.orm.sessionmaker(bind=self._articles_handler)()
+        articleOrm=newArticle.toORM()
+        session.add(articleOrm)
+        inserted_id = articleOrm.inserted_id
+        session.commit()
+        session.close()
         if inserted_id is None:
             return False
         newArticle.id = str(inserted_id)  # inserting new article will automatically fill id field by new _id in db
@@ -48,23 +56,32 @@ class ArticleRepository:
     def update(self, updatedArticle: Article) -> bool:
         if updatedArticle is None or not isinstance(updatedArticle, Article):
             raise TypeError('Invalid argument: updatedArticle')
-        updated_article_dict = updatedArticle.toMongoDictionary()
-        update_result = self._articles_handler.update_one({
-            '_id': updated_article_dict['_id']
-        }, {
-            '$set': updated_article_dict
-        })
+        session=sqla.orm.sessionmaker(bind=self._articles_handler)()
+        updated_article_orm = updatedArticle.toORM()
+        article_orm = session.query(ArticleORM).filter_by(id=updated_article_orm.id)
+        update_result=article_orm.count()
+        if(update_result==1):
+            article_orm=article_orm.one()
+            article_orm.update(updated_article_orm)
+        session.commit()
+        session.close()
         return update_result.matched_count == 1
 
     def remove(self, article_id: str) -> bool:
-        delete_result = self._articles_handler.delete_one({
-            '_id': ObjectId(article_id)
-        })
-        deleted_count = delete_result.deleted_count
-        return deleted_count >= 1
+        session=sqla.orm.sessionmaker(bind=self._articles_handler)()
+        delete_result = session.query(ArticleORM).filter_by(id=article_id)
+        delete_count = delete_result.count()
+        if(delete_count>0):
+            session.delete(delete_result.all())
+        session.commit()
+        session.close()
+        return delete_count >= 1
 
     def maxArticleCode(self) -> int:
-        for result in self._articles_handler.find().sort('code', pymongo.DESCENDING):
-            if 'code' in result and result['code'] is not None:
+        session=sqla.orm.sessionmaker(bind=self._articles_handler)()
+        for result in  session.query(ArticleORM).order_by(ArticleORM.code.desc()).all(): 
+            if result.code is not None:
+                session.close()
                 return result['code']
+        session.close()
         return -1

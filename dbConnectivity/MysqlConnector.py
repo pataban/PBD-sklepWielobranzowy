@@ -30,6 +30,13 @@ class ArticleORM(BazaModel):
     price=sqla.Column(sqla.DECIMAL(10,2),nullable=False)
     positions = sqla.orm.relationship('PositionORM')#backref='articles' back_populates='article'
 
+    def update(self,updatedArticle):#przyjmuje ArticleORM
+        self.id=updatedArticle.id
+        self.code=updatedArticle.code
+        self.name=updatedArticle.name
+        self.price=updatedArticle.price
+        self.positions=updatedArticle.positions
+    
     def __str__(self) -> str:
         return str(vars(self))
 

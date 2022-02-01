@@ -17,8 +17,8 @@ if __name__ == "__main__":
 
     # uzytkownik testowy
     session=sqla.orm.sessionmaker(bind=mysqlConnector.workersHandler)()
-    if not session.query(WorkerORM).count():
-        session.add(WorkerORM(id=111,workerNr=111, firstName="aaa", secondName="aaa", 
+    if not session.query(WorkerORM).filter_by(login='aaa').count():
+        session.add(WorkerORM(workerNr=111, firstName="aaa", secondName="aaa", 
                 login="aaa", password="aaa", isSeller=True, isManager=True, isOwner=True))
 
     print("towary:")
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     #shopService.chkTestUser()
     #shopService.printAll()
 
-    #gui=GUI(shopService)
-    #gui.mainloop()
+    gui=GUI(shopService)
+    gui.mainloop()
 
 
