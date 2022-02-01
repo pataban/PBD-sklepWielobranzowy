@@ -51,3 +51,11 @@ class Bill:
         if 'paymentMethod' in bill_dict:
             bill_dict.update({'paymentMethod': self.paymentMethod.name})
         return bill_dict
+
+    @classmethod
+    def fromORM(cls, bill_orm):
+        pass
+
+    def toORM(self):
+        pass
+

@@ -2,18 +2,21 @@ from typing import Optional
 
 import pymongo
 from bson import ObjectId
+import sqlalchemy as sqla
 
 from models.Article import Article
-
+from dbConnectivity.MysqlConnector import *
 
 class ArticleRepository:
-    def __init__(self, articlesMongoHandler):
-        self._articles_handler = articlesMongoHandler
+    def __init__(self, articlesHandler):
+        self._articles_handler = articlesHandler
 
     def find(self) -> [Article]:
+        session=sqla.orm.sessionmaker(bind=self._articles_handler)()
         article_objects = []
-        for article_mongo_dict in self._articles_handler.find():
-            article_objects.append(Article.fromMongoDictionary(article_mongo_dict))
+        for article_orm in session.query(WorkerORM).all():
+            article_objects.append(Article.fromORM(article_orm))
+        session.close()
         return article_objects
 
     def findById(self, article_id) -> Optional[Article]:

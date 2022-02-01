@@ -9,10 +9,10 @@ from userInterface.GUI import GUI
 
 if __name__ == "__main__":
     mysqlConnector = MysqlConnector()
-    #articleRepository = ArticleRepository(mysqlConnector.articlesHandler)
-    #workerRepository = WorkerRepository(mysqlConnector.workersHandler)
-    #clientRepository = ClientRepository(mysqlConnector.clientsHandler)
-    #shopService = ShopService(articleRepository, workerRepository, clientRepository)
+    articleRepository = ArticleRepository(mysqlConnector.articlesHandler)
+    workerRepository = WorkerRepository(mysqlConnector.workersHandler)
+    clientRepository = ClientRepository(mysqlConnector.clientsHandler)
+    shopService = ShopService(articleRepository, workerRepository, clientRepository)
 
 
     # uzytkownik testowy

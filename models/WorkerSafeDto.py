@@ -18,3 +18,11 @@ class WorkerSafeDto:
             worker_dict.update({'_id': ObjectId(self.id)})
             worker_dict.pop('id')
         return worker_dict
+
+    @classmethod
+    def fromORM(cls, worker_orm):
+        pass
+
+    def toORM(self):
+        pass
+

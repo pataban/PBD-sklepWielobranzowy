@@ -41,6 +41,13 @@ class Article:
             article_dict.pop('id')
         return article_dict
 
+    @classmethod
+    def fromORM(cls, article_orm):
+        pass
+
+    def toORM(self):
+        pass
+
     def __str__(self) -> str:
         return 'Article {' + \
                'id: ' + str(self.id) + \

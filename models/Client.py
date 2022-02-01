@@ -67,3 +67,11 @@ class Client:
             client_dict.update({'_id': ObjectId(self.object_id)})
             client_dict.pop('object_id')
         return client_dict
+
+    @classmethod
+    def fromORM(cls, client_orm):
+        pass
+
+    def toORM(self):
+        pass
+

@@ -28,3 +28,11 @@ class BillDto:
             ', dateTime: ' + str(self.dateTime) + \
             ', client_id: ' + str(self.client_id) + \
             '}'
+
+    @classmethod
+    def fromORM(cls, bill_orm):
+        pass
+
+    def toORM(self):
+        pass
+

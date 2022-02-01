@@ -30,3 +30,11 @@ class ArticleInBill:
         if 'purchasePrice' in article_in_bill_dict:
             article_in_bill_dict.update({'purchasePrice': Decimal128(self.purchasePrice)})
         return article_in_bill_dict
+
+    @classmethod
+    def fromORM(cls, article_orm):
+        pass
+
+    def toORM(self):
+        pass
+

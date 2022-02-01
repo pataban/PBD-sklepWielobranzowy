@@ -26,3 +26,11 @@ class ClientWithBillsNumbersOnlyDto:
             ', object_id: ' + str(self.object_id) + \
             ', billsNumbers: ' + str(self.billsNumbers) + \
             '}'
+
+    @classmethod
+    def fromORM(cls, client_orm):
+        pass
+
+    def toORM(self):
+        pass
+
