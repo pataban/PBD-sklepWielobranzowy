@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from models.ArticleInBill import ArticleInBill
+from dbConnectivity.MysqlConnector import BillORM
+from models.ArticleInBillDto import ArticleInBillDto
 from models.PaymentMethod import PaymentMethod
 from models.WorkerSafeDto import WorkerSafeDto
 
@@ -17,7 +18,7 @@ class Bill:
         if articlesInBill is not None:
             if not isinstance(articlesInBill, list):
                 raise TypeError('Invalid argument: articles')
-            if not all(isinstance(elem, ArticleInBill) for elem in articlesInBill):
+            if not all(isinstance(elem, ArticleInBillDto) for elem in articlesInBill):
                 raise TypeError('Invalid argument: articles')
         if not isinstance(isAlreadyPaid, bool):
             raise TypeError('Invalid argument: isAlreadyPaid')
@@ -57,5 +58,18 @@ class Bill:
         pass
 
     def toORM(self):
-        pass
+        position_orms = []
+        for position in self.articlesInBill:
+            position_orms.append(position.toORM())
+
+        return BillORM(
+            None,
+            self.billNr,
+            self.isAlreadyPaid,
+            self.dateTime,
+            self.paymentMethod,
+            self.worker.id,
+            None,
+            position_orms
+        )
 

@@ -7,12 +7,7 @@ class BillDto:
 
         self.billNr = bill_orm.billNr
         self.worker_id = bill_orm.worker_id
-        if bill_orm.paymentMethod == 'CASH':
-            self.paymentMethod = PaymentMethod.CASH
-        elif bill_orm.paymentMethod == 'BANK_TRANSFER':
-            self.paymentMethod = PaymentMethod.BANK_TRANSFER
-        else:
-            self.paymentMethod = None
+        self.paymentMethod = bill_orm.paymentMethod
         self.isAlreadyPaid = bill_orm.isAlreadyPaid
         self.dateTime = bill_orm.dateTime
         self.client_id = bill_orm.client_id
@@ -26,10 +21,6 @@ class BillDto:
                ', dateTime: ' + str(self.dateTime) + \
                ', client_id: ' + str(self.client_id) + \
                '}'
-
-    @classmethod
-    def fromORM(cls, bill_orm):
-        pass
 
     def toORM(self):
         pass

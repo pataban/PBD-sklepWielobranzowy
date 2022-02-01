@@ -19,7 +19,7 @@ class WorkerRepository:
         session=sqla.orm.sessionmaker(bind=self._workers_handler)()
         worker_objects = []
         for worker_orm in session.query(WorkerORM).all():
-            worker_objects.append(WorkerSafeDto.fromORM(worker_orm))
+            worker_objects.append(WorkerSafeDto(worker_orm))
         session.close()
         return worker_objects
 
@@ -29,7 +29,7 @@ class WorkerRepository:
         worker=None
         if(worker_result.count()==1):
             worker_orm = worker_result.one()
-            worker=WorkerSafeDto.fromORM(worker_orm)
+            worker=WorkerSafeDto(worker_orm)
         session.close()
         return worker
 
@@ -92,21 +92,15 @@ class WorkerRepository:
         worker=None
         if(select_result.count()>0):
             worker_orm=select_result.all()[0]
-            worker=WorkerSafeDto.fromORM(worker_orm)
+            worker=WorkerSafeDto(worker_orm)
         session.close()
         return worker
 
     def maxWorkerNr(self) -> int:
-<<<<<<< HEAD
-        for result in self._workers_handler.find().sort('worker_id', pymongo.DESCENDING):
-            if 'worker_id' in result and result['worker_id'] is not None:
-                return result['worker_id']
-=======
         session=sqla.orm.sessionmaker(bind=self._workers_handler)()
         for result in session.query(WorkerORM).order_by(WorkerORM.workerNr.desc()).all():
             if result.workerNr is not None:
                 session.close()
                 return result.workerNr
         session.close()
->>>>>>> 8a54d4ee4671b0b6837e6ebaece861661a1798e3
         return -1

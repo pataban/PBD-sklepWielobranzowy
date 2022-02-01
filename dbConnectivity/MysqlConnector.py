@@ -65,6 +65,12 @@ class WorkerORM(BazaModel):
         self.isManager=updatedWorker.isManager
         self.isOwner=updatedWorker.isOwner
 
+    def addNewBill(self, billOrm):
+        if self.bills is not None:
+            self.bills.append(billOrm)
+        else:
+            self.bills = [billOrm]
+
     def __str__(self) -> str:
         return str(vars(self))
 
@@ -81,6 +87,23 @@ class ClientORM(BazaModel):
     address = sqla.Column(sqla.String(100), nullable=True)
     bills = sqla.orm.relationship('BillORM')  # backref='clients' back_populates='client'
 
+    def __init__(self, client_id, clientNr, firstName, secondName, vatId, name, telephone, address, bills):
+        self.id = client_id
+        self.clientNr = clientNr
+        self.firstName = firstName
+        self.secondName = secondName
+        self.vatId = vatId
+        self.name = name
+        self.telephone = telephone
+        self.address = address
+        self.bills = bills
+
+    def addNewBill(self, billOrm):
+        if self.bills is not None:
+            self.bills.append(billOrm)
+        else:
+            self.bills = [billOrm]
+
     def __str__(self) -> str:
         return str(vars(self))
 
@@ -95,6 +118,16 @@ class BillORM(BazaModel):
     worker_id = sqla.Column(sqla.Integer, sqla.ForeignKey('workers.id'))
     client_id = sqla.Column(sqla.Integer, sqla.ForeignKey('clients.id'))
     positions = sqla.orm.relationship('PositionORM')  # backref='bills' back_populates='bill'
+
+    def __init__(self, bill_id, billNr, isAlreadyPaid, dateTime, paymentMethod, worker_id, client_id, positions):
+        self.id = bill_id
+        self.billNr = billNr
+        self.isAlreadyPaid = isAlreadyPaid
+        self.dateTime = dateTime
+        self.paymentMethod = paymentMethod
+        self.worker_id = worker_id
+        self.client_id = client_id
+        self.positions = positions
 
     def __str__(self) -> str:
         return str(vars(self))

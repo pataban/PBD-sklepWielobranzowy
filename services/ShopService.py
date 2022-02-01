@@ -1,13 +1,15 @@
 from random import randint
 from typing import Optional
 
+from dbConnectivity.MysqlConnector import BillORM
 from models.Article import Article
-from models.ArticleInBill import ArticleInBill
+from models.ArticleInBillDto import ArticleInBillDto
 from models.Bill import Bill
 from models.BillDto import BillDto
 from models.Client import Client
 from models.ClientOnlyDto import ClientOnlyDto
 from models.ClientWithBillsNumbersOnlyDto import ClientWithBillsNumbersOnlyDto
+from models.NewBillDto import NewBillDto
 from models.Worker import Worker
 from models.WorkerSafeDto import WorkerSafeDto
 from repositories.ArticleRepository import ArticleRepository
@@ -31,7 +33,7 @@ class ShopService:  # future facade for all operations on shop database
         self._articleCode = self._articleRepository.maxArticleCode()
         self._clientNr = self._clientRepository.maxClientNr()
         self._workerNr = self._workerRepository.maxWorkerNr()
-        #self._billNr = self._clientRepository.maxBillNr()
+        self._billNr = self._clientRepository.maxBillNr()
 
 
     # zwraca wszystkich pracowników BEZ loginów i haseł
@@ -100,14 +102,13 @@ class ShopService:  # future facade for all operations on shop database
     def insertArticle(self, newArticle: Article) -> bool:
         return self._articleRepository.insert(newArticle)
 
-    # wstawia nowy rachunek do klienta o podanym id
-    # (wymagany pełny Bill)
-    def insertBill(self, client_id: str, newBill: Bill) -> bool:
-        return self._clientRepository.addNewBill(client_id, newBill)
+    # wstawia nowy rachunek z lista produktow
+    def insertBill(self, newBill: NewBillDto, products: [ArticleInBillDto]) -> BillORM:
+        return self._clientRepository.addNewBill(newBill, products)
 
     # wstawia nowy produkt do rachunku o podanym numerze do klienta o podanym id
-    # (wymagany pełny ArticleInBill)
-    def insertArticleInBill(self, client_id: str, billNr: int, newArticleInBill: ArticleInBill) -> bool:
+    # (wymagany pełny ArticleInBillDto)
+    def insertArticleInBill(self, client_id: str, billNr: int, newArticleInBill: ArticleInBillDto) -> bool:
         return self._clientRepository.addNewArticleInBill(client_id, billNr, newArticleInBill)
 
     # aktualizuje pracownika

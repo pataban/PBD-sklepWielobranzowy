@@ -1,5 +1,6 @@
 from bson import ObjectId
 
+from dbConnectivity.MysqlConnector import ClientORM
 from models.Bill import Bill
 
 
@@ -72,6 +73,22 @@ class Client:
     def fromORM(cls, client_orm):
         pass
 
-    def toORM(self):
-        pass
+    def toORM(self) -> ClientORM:
+        bill_orms = []
+        for bill in self.bills:
+            bill_orms.append(bill.toORM())
+
+        client_orm = ClientORM(
+            self.object_id,
+            self.clientNr,
+            self.firstName,
+            self.secondName,
+            self.vatId,
+            self.name,
+            self.telephone,
+            self.address,
+            bill_orms
+        )
+
+        return client_orm
 
