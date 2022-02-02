@@ -90,13 +90,19 @@ class ClientRepository:
         return True
 
     def remove(self, client_id: str) -> bool:
-
+        # session = sqla.orm.sessionmaker(self._mysql_handler)()
+        # client_orm = session.query(ClientORM).filter_by(id=client_id).one()
+        # session.
+        # session.commit()
+        # session.close()
         pass
 
-    def addNewBill(self, newBill: NewBillDto, products: [ArticleInBillDto]) -> BillORM:
+    def addNewBill(self, newBill: NewBillDto, products: [ArticleInBillDto]) -> int:
         session = sqla.orm.sessionmaker(self._mysql_handler, autoflush=False)()
         client_orm = session.query(ClientORM).filter_by(clientNr=newBill.client_number).one()
         worker_orm = session.query(WorkerORM).filter_by(workerNr=newBill.worker_number).one()
+
+
 
         newBillOrm = BillORM(
             None,
@@ -115,11 +121,30 @@ class ClientRepository:
 
         session.flush()
         session.commit()
-        inserted_id = newBillOrm.id
-        if inserted_id is None:
+        inserted_bill_id = newBillOrm.id
+        inserted_bill_number = newBillOrm.billNr
+        if inserted_bill_id is None:
             return None
+
+        for articleInBillDto in products:
+
+            article_orm = session.query(ArticleORM).filter_by(code=articleInBillDto.article_id).one()
+            if articleInBillDto.purchasePrice is None:
+                articleInBillDto.purchasePrice = article_orm.price
+            position_orm = PositionORM(
+                article_orm.id,
+                inserted_bill_id,
+                articleInBillDto.quantity,
+                articleInBillDto.purchasePrice
+            )
+            session.add(position_orm)
+            article_orm.addNewPosition(position_orm)
+
+        session.flush()
+        session.commit()
+
         session.close()
-        return newBillOrm
+        return inserted_bill_number
 
 
     def maxClientNr(self) -> int:

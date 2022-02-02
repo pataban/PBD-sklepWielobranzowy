@@ -108,11 +108,11 @@ class RachunkiFrame(DataFrame):
             client_number
         )
 
-        newBill = self.shopService.insertBill(newBillDtos, articleInBillsDtos)
-        if newBill is not None:
+        inserted_bill_number = self.shopService.insertBill(newBillDtos, articleInBillsDtos)
+        if inserted_bill_number is not None:
             self.rachunkiSheet.insert("", "end", values=(
                 dict["nrK"],
-                newBill.billNr,
+                inserted_bill_number,
                 dict["data"],
                 self.user.nrP,
                 dict["metodaPlatnosci"],

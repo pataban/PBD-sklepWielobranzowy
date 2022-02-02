@@ -41,6 +41,12 @@ class ArticleORM(BazaModel):
         self.price = updatedArticle.price
         self.positions = updatedArticle.positions
 
+    def addNewPosition(self, positionOrm):
+        if self.positions is not None:
+            self.positions.append(positionOrm)
+        else:
+            self.positions = [positionOrm]
+
     def __str__(self) -> str:
         return str(vars(self))
 
@@ -152,6 +158,12 @@ class PositionORM(BazaModel):
     bill_id = sqla.Column(sqla.Integer, sqla.ForeignKey('bills.id'), primary_key=True)
     quantity = sqla.Column(sqla.Integer, default=1)
     purchasePrice = sqla.Column(sqla.DECIMAL(10, 2), nullable=False)
+
+    def __init__(self, article_id, bill_id, quantity, purchasePrice):
+        self.article_id = article_id
+        self.bill_id = bill_id
+        self.quantity = quantity
+        self.purchasePrice = purchasePrice
 
     def __str__(self) -> str:
         return str(vars(self))
