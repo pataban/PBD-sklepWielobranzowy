@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+
+from models.NewBillDto import NewBillDto
 from userInterface.DataFrame.DataFrame import DataFrame
 import datetime
 from models.Bill import Bill
@@ -25,15 +27,20 @@ class RachunkiFrame(DataFrame):
         self.rachunkiSheet.heading("nrR", text="NrR")
         self.rachunkiSheet.heading("data", text="Data")
         self.rachunkiSheet.heading("nrP", text="NrP")
-        self.rachunkiSheet.heading("metodaPlatnosci", text="etoda Platnosci")
-        self.rachunkiSheet.heading("czyZaplacony", text="Czy Zaplacony")
+        self.rachunkiSheet.heading("metodaPlatnosci", text="Metoda platnosci")
+        self.rachunkiSheet.heading("czyZaplacony", text="Czy zaplacony")
         self.rachunkiSheet.grid(row=2)
         
         self.fillSheet(self.shopService.findBills())
 
     def fillSheet(self,bills):
         for b in bills:
-            self.rachunkiSheet.insert("","end",values=(b.client_id,b.billNr,b.dateTime,b.workerNr,b.paymentMethod,b.isAlreadyPaid))
+            metoda_platnosci_slownie = "Brak danych"
+            if b.paymentMethod == PaymentMethod.CASH:
+                metoda_platnosci_slownie = "gotówka"
+            elif b.paymentMethod == PaymentMethod.BANK_TRANSFER:
+                metoda_platnosci_slownie = "przelew"
+            self.rachunkiSheet.insert("","end", values=(b.client_id, b.billNr, b.dateTime, b.worker_id, metoda_platnosci_slownie, b.isAlreadyPaid))
         
 
     def getRecomendedKeys(self):
@@ -53,8 +60,8 @@ class RachunkiFrame(DataFrame):
     def createNewDocument(self,dict):                   #sprawdzic czy dziala z artykulami
         if not super().createNewDocument(dict):
             return False
-        articles=self.artykulyFrame.getList()
-        if articles==None:
+        articleInBillsDtos=self.artykulyFrame.getArticleInBillDtos()
+        if articleInBillsDtos==None:
             return False
         self.artykulyFrame.grid_forget()
         tmp=dict["data"]
@@ -63,34 +70,54 @@ class RachunkiFrame(DataFrame):
         tmp[1]=tmp[1].split(":")
         print(tmp)
         dict["data"]=datetime.datetime(int(tmp[0][2]),int(tmp[0][1]),int(tmp[0][0]),int(tmp[1][0]),int(tmp[1][1]),int(tmp[1][2]))
-        
+
+        metoda_platnosci_enum = None
         if(dict["metodaPlatnosci"]=="gotowka"):
-            dict["metodaPlatnosci"]=PaymentMethod.CASH
+            metoda_platnosci_enum=PaymentMethod.CASH
         elif(dict["metodaPlatnosci"]=="przelew"):
-            dict["metodaPlatnosci"]=PaymentMethod.BANK_TRANSFER
+            metoda_platnosci_enum=PaymentMethod.BANK_TRANSFER
         else:
-            dict["metodaPlatnosci"]=None
+            metoda_platnosci_enum=None
 
         if(dict["zaplacony"]=="true"):
             dict["zaplacony"]=True
         else:
             dict["zaplacony"]=False
 
-        clientId=""
+        client_number = None
         clients=self.shopService.findClients()
-        if "nrK" in dict:
-            for c in clients:
-                if c.clientNr==dict["nrK"]:
-                    clientId=c.object_id
-        else:
-            for c in clients:
-                if c.vatId==dict["NIP"]:
-                    clientId=c.object_id
+        try:
+            if "nrK" in dict:
+                for c in clients:
+                    if c.clientNr==dict["nrK"]:
+                        client_number=c.clientNr
+            else:
+                for c in clients:
+                    if c.vatId==dict["NIP"]:
+                        client_number=c.clientNr
+        except:
+            pass
+        if client_number is None:
+            return False
 
-        bill=Bill(dict["nrR"],self.user,dict["metodaPlatnosci"],articles,dict["zaplacony"],dict["data"])
-        if(self.shopService.insertBill(clientId,bill)):
-            self.rachunkiSheet.insert("","end",values=(clientId,bill.billNr,bill.dateTime,self.user.nrP,bill.paymentMethod,bill.isAlreadyPaid))        #sprawdzic dodawanie i wczytywanie
+        newBillDtos=NewBillDto(
+            self.user.nrP,
+            metoda_platnosci_enum,
+            dict["zaplacony"],
+            dict["data"],
+            client_number
+        )
 
+        inserted_bill_number = self.shopService.insertBill(newBillDtos, articleInBillsDtos)
+        if inserted_bill_number is not None:
+            self.rachunkiSheet.insert("", "end", values=(
+                dict["nrK"],
+                inserted_bill_number,
+                dict["data"],
+                self.user.nrP,
+                dict["metodaPlatnosci"],
+                dict["zaplacony"]
+            ))
 
 
     def updateDocument(self,dict):      #TODO

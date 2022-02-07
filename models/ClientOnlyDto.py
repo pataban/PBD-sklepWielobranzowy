@@ -1,16 +1,18 @@
 from bson import ObjectId
 
+from dbConnectivity.MysqlConnector import *
+
 
 class ClientOnlyDto:
-    def __init__(self, clientMongoDict):
-        self.firstName = clientMongoDict.get('firstName')
-        self.secondName = clientMongoDict.get('secondName')
-        self.name = clientMongoDict.get('name')
-        self.telephone = clientMongoDict.get('telephone')
-        self.vatId = clientMongoDict.get('vatId')
-        self.address = clientMongoDict.get('address')
-        self.clientNr = clientMongoDict.get('clientNr')
-        self.object_id = clientMongoDict.get('_id')
+    def __init__(self, client_orm):
+        self.firstName = client_orm.firstName
+        self.secondName = client_orm.secondName
+        self.name = client_orm.name
+        self.telephone = client_orm.telephone
+        self.vatId = client_orm.vatId
+        self.address = client_orm.address
+        self.clientNr = client_orm.clientNr
+        self.object_id = client_orm.id
 
     def __str__(self) -> str:
         return 'ClientOnlyDto {' + \
@@ -23,13 +25,3 @@ class ClientOnlyDto:
                ', clientNr: ' + str(self.clientNr) + \
                ', object_id: ' + str(self.object_id) + \
                '}'
-
-    def toMongoDictionary(self):
-        client_dict = vars(self).copy()
-        for key in list(client_dict.keys()):
-            if client_dict[key] is None:
-                client_dict.pop(key)
-        if 'object_id' in client_dict:
-            client_dict.update({'_id': ObjectId(self.object_id)})
-            client_dict.pop('object_id')
-        return client_dict

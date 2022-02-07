@@ -1,13 +1,15 @@
 from random import randint
 from typing import Optional
 
+from dbConnectivity.MysqlConnector import BillORM
 from models.Article import Article
-from models.ArticleInBill import ArticleInBill
+from models.ArticleInBillDto import ArticleInBillDto
 from models.Bill import Bill
 from models.BillDto import BillDto
 from models.Client import Client
 from models.ClientOnlyDto import ClientOnlyDto
 from models.ClientWithBillsNumbersOnlyDto import ClientWithBillsNumbersOnlyDto
+from models.NewBillDto import NewBillDto
 from models.Worker import Worker
 from models.WorkerSafeDto import WorkerSafeDto
 from repositories.ArticleRepository import ArticleRepository
@@ -100,14 +102,13 @@ class ShopService:  # future facade for all operations on shop database
     def insertArticle(self, newArticle: Article) -> bool:
         return self._articleRepository.insert(newArticle)
 
-    # wstawia nowy rachunek do klienta o podanym id
-    # (wymagany pełny Bill)
-    def insertBill(self, client_id: str, newBill: Bill) -> bool:
-        return self._clientRepository.addNewBill(client_id, newBill)
+    # wstawia nowy rachunek z lista produktow
+    def insertBill(self, newBill: NewBillDto, products: [ArticleInBillDto]) -> BillORM:
+        return self._clientRepository.addNewBill(newBill, products)
 
     # wstawia nowy produkt do rachunku o podanym numerze do klienta o podanym id
-    # (wymagany pełny ArticleInBill)
-    def insertArticleInBill(self, client_id: str, billNr: int, newArticleInBill: ArticleInBill) -> bool:
+    # (wymagany pełny ArticleInBillDto)
+    def insertArticleInBill(self, client_id: str, billNr: int, newArticleInBill: ArticleInBillDto) -> bool:
         return self._clientRepository.addNewArticleInBill(client_id, billNr, newArticleInBill)
 
     # aktualizuje pracownika
@@ -168,6 +169,7 @@ class ShopService:  # future facade for all operations on shop database
     # jeśli logowanie niepoprawne, zwraca None
     # jeśli logowanie poprawne zwraca pracownika w postaci okrojonej o dane do logowania
     def login(self, login, password) -> Optional[WorkerSafeDto]:
+        #return WorkerSafeDto({"workerNr":111,"firstName":"aaa","secondName":"aaa","isSeller":True,"isManager":True,"isOwner":True,"_id":111})
         return self._workerRepository.login(login, password)
 
     def chkTestUser(self):  # uzytkownik testowy
@@ -192,7 +194,7 @@ class ShopService:  # future facade for all operations on shop database
     def delAll(self):
         self._articleRepository._articles_handler.delete_many({})
         self._workerRepository._workers_handler.delete_many({})
-        self._clientRepository._clients_handler.delete_many({})
+        self._clientRepository._mysql_handler.delete_many({})
 
     def getData(self, collection, atribute=None, value=None):  # old
         if (atribute == None and value == None):

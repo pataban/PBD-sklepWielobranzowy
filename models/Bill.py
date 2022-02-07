@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from models.ArticleInBill import ArticleInBill
+from dbConnectivity.MysqlConnector import BillORM
+from models.ArticleInBillDto import ArticleInBillDto
 from models.PaymentMethod import PaymentMethod
 from models.WorkerSafeDto import WorkerSafeDto
 
@@ -17,7 +18,7 @@ class Bill:
         if articlesInBill is not None:
             if not isinstance(articlesInBill, list):
                 raise TypeError('Invalid argument: articles')
-            if not all(isinstance(elem, ArticleInBill) for elem in articlesInBill):
+            if not all(isinstance(elem, ArticleInBillDto) for elem in articlesInBill):
                 raise TypeError('Invalid argument: articles')
         if not isinstance(isAlreadyPaid, bool):
             raise TypeError('Invalid argument: isAlreadyPaid')
@@ -40,7 +41,7 @@ class Bill:
     def toMongoDictionary(self):
         bill_dict = vars(self).copy()
         if 'worker' in bill_dict:
-            bill_dict['workerNr'] = self.worker.nrP
+            bill_dict['worker_id'] = self.worker.nrP
             bill_dict.pop('worker')
         if 'articlesInBill' in bill_dict and len(self.articlesInBill) > 0:
             bill_dict.pop('articlesInBill')
@@ -51,3 +52,24 @@ class Bill:
         if 'paymentMethod' in bill_dict:
             bill_dict.update({'paymentMethod': self.paymentMethod.name})
         return bill_dict
+
+    @classmethod
+    def fromORM(cls, bill_orm):
+        pass
+
+    def toORM(self):
+        position_orms = []
+        for position in self.articlesInBill:
+            position_orms.append(position.toORM())
+
+        return BillORM(
+            None,
+            self.billNr,
+            self.isAlreadyPaid,
+            self.dateTime,
+            self.paymentMethod,
+            self.worker.id,
+            None,
+            position_orms
+        )
+

@@ -1,7 +1,7 @@
 import tkinter as tk
 from decimal import Decimal
 from userInterface.DocEditFrame import DocEditFrame
-from models.ArticleInBill import ArticleInBill
+from models.ArticleInBillDto import ArticleInBillDto
 
 class TowaryWRachunkuFrame(tk.Frame):
     def __init__(self,master,shopService):
@@ -49,21 +49,18 @@ class TowaryWRachunkuFrame(tk.Frame):
         self.fields.remove(field)
         self.update()
 
-    def getList(self):
-        articleList=[]
+    def getArticleInBillDtos(self):
+        articleInBillDtos=[]
         for field in self.fields:
             kod=field[0].get()
             ilosc=field[1].get()
             cena=field[2].get()
 
             if(kod==""):
-                self.statusLabel["text"]="Error: Missing kodE"
+                self.statusLabel["text"]="Error: Missing product code"
                 return None
             if(ilosc==""):
                 self.statusLabel["text"]="Error: Missing ilosc"
-                return None
-            if(cena==""):
-                self.statusLabel["text"]="Error: Missing cena"
                 return None
             
             try:
@@ -83,21 +80,25 @@ class TowaryWRachunkuFrame(tk.Frame):
                 except :
                     self.statusLabel["text"]="Error: Wrong data type. Expected int"
                     return None
-            try:
-                cena=Decimal(cena)
-            except:
-                self.statusLabel["text"]="Error: Wrong data type Expected Decimal"
-                return None
+            if cena is not None:
+                if cena == "":
+                    cena = None
+                else:
+                    try:
+                        cena=Decimal(cena)
+                    except:
+                        self.statusLabel["text"]="Error: Wrong price data type - Expected Decimal or None"
+                        return None
 
             article=self.shopService.findArticleByCode(kod)
             if article==None:
                 self.statusLabel["text"]="Error: Wrong article in row "+str(field[-1])
                 return None
-            articleInBill=ArticleInBill(article,ilosc,cena)
-            articleList.append(articleInBill)
-        if len(articleList)==0:
+            articleInBillDto=ArticleInBillDto(kod, ilosc, cena)
+            articleInBillDtos.append(articleInBillDto)
+        if len(articleInBillDtos)==0:
             self.statusLabel["text"]="Error: No articles provided"
             return None
-        return articleList
+        return articleInBillDtos
 
 

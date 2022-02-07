@@ -1,6 +1,7 @@
 from bson import ObjectId
 
 from resources.static.constants import *
+from dbConnectivity.MysqlConnector import *
 
 
 class Worker:
@@ -16,7 +17,7 @@ class Worker:
                  object_id=None):  # object_id can be None if you want to insert new Worker
                                    # object_id should be actually filled otherwise
         if workerNr is None or not isinstance(workerNr, int):
-            raise TypeError('Invalid argument: workerNr')
+            raise TypeError('Invalid argument: worker_id')
         if firstName is None or not isinstance(firstName, str):
             raise TypeError('Invalid argument: firstName')
         if secondName is None or not isinstance(secondName, str):
@@ -35,7 +36,7 @@ class Worker:
             raise TypeError('Invalid argument: isManager')
         if not isinstance(isOwner, bool):
             raise TypeError('Invalid argument: isOwner')
-        if object_id is not None and not isinstance(object_id, str):
+        if object_id is not None and not isinstance(object_id, int):
             raise TypeError('Invalid argument: object_id')
 
         self.workerNr = workerNr
@@ -54,7 +55,7 @@ class Worker:
     @classmethod
     def fromMongoDictionary(cls, worker_mongo_dict):
         return cls(
-            worker_mongo_dict["workerNr"],
+            worker_mongo_dict["worker_id"],
             worker_mongo_dict["firstName"],
             worker_mongo_dict["secondName"],
             worker_mongo_dict["login"],
@@ -71,3 +72,20 @@ class Worker:
             worker_dict.update({'_id': ObjectId(self.id)})
             worker_dict.pop('id')
         return worker_dict
+
+    @classmethod
+    def fromORM(cls, worker_orm):
+        return cls(
+            worker_orm.workerNr,worker_orm.firstName,worker_orm.secondName,
+                worker_orm.login,worker_orm.password,
+                isSeller=worker_orm.isSeller,isManager=worker_orm.isManager,
+                isOwner=worker_orm.isOwner,object_id=worker_orm.id
+        )
+
+    def toORM(self):
+        return WorkerORM(id=self.id,workerNr=self.workerNr,
+                firstName=self.firstName,secondName=self.secondName,
+                login=self.login,password=self.password,
+                isSeller=self.isSeller,isManager=self.isManager,
+                isOwner=self.isOwner)
+
